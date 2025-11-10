@@ -1,12 +1,13 @@
 import java.util.*;
 
-
+// Represents a single student
 class Student {
     String name;
     int id;
     int mark1, mark2, mark3;
     double average;
 
+    // Constructor
     Student(String name, int id, int mark1, int mark2, int mark3) {
         this.name = name;
         this.id = id;
@@ -16,13 +17,13 @@ class Student {
         calculateAverage();
     }
 
-    
+    // Calculate and store average
     void calculateAverage() {
         average = (mark1 + mark2 + mark3) / 3.0;
     }
 }
 
-
+// Handles operations like sorting, searching, grading, etc.
 class StudentService {
 
     // Find the topper student
@@ -37,11 +38,12 @@ class StudentService {
         return topper;
     }
 
+    // Sort students by average (descending order)
     void sortByAverage(ArrayList<Student> students) {
         Collections.sort(students, (a, b) -> Double.compare(b.average, a.average));
     }
 
-    
+    // Search student by ID
     Student searchById(ArrayList<Student> students, int searchId) {
         for (Student s : students) {
             if (s.id == searchId) {
@@ -51,7 +53,7 @@ class StudentService {
         return null;
     }
 
-    
+    // Print grades for each student
     void printGrades(ArrayList<Student> students) {
         for (Student s : students) {
             String grade;
@@ -65,7 +67,7 @@ class StudentService {
     }
 }
 
-
+// Handles input/output and program flow
 public class MainApp {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -75,7 +77,7 @@ public class MainApp {
         System.out.print("Enter number of students: ");
         int n = sc.nextInt();
 
-        
+        // Input student data
         for (int i = 0; i < n; i++) {
             System.out.println("\n--- Enter details for student " + (i + 1) + " ---");
             System.out.print("Name: ");
@@ -88,17 +90,18 @@ public class MainApp {
             students.add(new Student(name, id, m1, m2, m3));
         }
 
+        // Display all students
         System.out.println("\nAll Students:");
         for (Student s : students) {
             System.out.println("Name: " + s.name + " | ID: " + s.id + " | Avg: " + s.average);
         }
 
-        
+        // Find topper
         Student topper = service.findTopper(students);
         if (topper != null)
             System.out.println("\nTopper: " + topper.name + " | Avg: " + topper.average);
 
-        
+        // Sort by average
         System.out.print("\nSort by Average? (y/n): ");
         if (sc.next().equalsIgnoreCase("y")) {
             service.sortByAverage(students);
@@ -108,6 +111,7 @@ public class MainApp {
             }
         }
 
+        // Search by ID
         System.out.print("\nSearch student by ID? (y/n): ");
         if (sc.next().equalsIgnoreCase("y")) {
             System.out.print("Enter ID: ");
@@ -119,6 +123,7 @@ public class MainApp {
                 System.out.println("Student not found.");
         }
 
+        // Calculate grade
         System.out.print("\nCalculate grades? (y/n): ");
         if (sc.next().equalsIgnoreCase("y")) {
             System.out.println("\nGrades:");
