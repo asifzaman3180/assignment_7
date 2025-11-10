@@ -1,5 +1,7 @@
 import java.util.*;
 
+//Student class - holds info about one student.
+//Name, ID, marks, average, and grade calculation.
 class Student {
     String name;
     int id;
@@ -8,6 +10,7 @@ class Student {
     int marks3;
     double average;
 
+    // Constructor to set student details.
     Student(String name, int id, int m1, int m2, int m3) {
         this.name = name;
         this.id = id;
@@ -17,10 +20,12 @@ class Student {
         this.average = calculateAverage();
     }
 
+    //Calculate the average marks.
     double calculateAverage() {
         return (marks1 + marks2 + marks3) / 3.0;
     }
 
+    //Return grade according to average.
     String getGrade() {
         if (average >= 80)
             return "A+";
@@ -34,15 +39,18 @@ class Student {
             return "F";
     }
 
+    //toString method for printing student info.
     public String toString() {
         return "Name: " + name + " ID: " + id + " Average: " + average;
     }
 }
 
+//StudentService class handles all student-related operations.
 class StudentService {
     ArrayList<Student> students = new ArrayList<>();
     Scanner scanner = new Scanner(System.in);
 
+    // Take student details as input from user.
     void inputStudents() {
         System.out.print("Enter number of students: ");
         int total = scanner.nextInt();
@@ -61,6 +69,7 @@ class StudentService {
         }
     }
 
+    //Show all student details.
     void showAllStudents() {
         System.out.println("All Students:");
         for (Student s : students) {
@@ -68,6 +77,8 @@ class StudentService {
         }
     }
 
+    //Find the student with highest average.
+     
     Student findTopper() {
         if (students.isEmpty()) return null;
         Student top = students.get(0);
@@ -78,6 +89,8 @@ class StudentService {
         }
         return top;
     }
+
+    // Sort students by average marks (descending order).
 
     void sortByAverage() {
         for (int i = 0; i < students.size() - 1; i++) {
@@ -91,6 +104,8 @@ class StudentService {
         }
     }
 
+    //Search a student by ID.
+     
     void searchById() {
         System.out.print("Enter ID to search: ");
         int id = scanner.nextInt();
@@ -107,6 +122,7 @@ class StudentService {
         }
     }
 
+    //Print grades for all students.
     void printGrades() {
         for (Student s : students) {
             System.out.println(s.name + " Grade: " + s.getGrade());
@@ -114,18 +130,25 @@ class StudentService {
     }
 }
 
+//Main class to run the whole application.
+
 public class StudentApp {
     public static void main(String[] args) {
         StudentService service = new StudentService();
 
+        // taking all student data
         service.inputStudents();
+
+        // show all students
         service.showAllStudents();
 
+        // show topper info
         Student topper = service.findTopper();
         if (topper != null) {
             System.out.println("Topper: " + topper.name + " Average: " + topper.average);
         }
 
+        // sorting students by average
         System.out.print("Sort by Average? (y/n): ");
         String sortChoice = service.scanner.next();
         if (sortChoice.equals("y")) {
@@ -134,12 +157,14 @@ public class StudentApp {
             service.showAllStudents();
         }
 
+        // search by ID
         System.out.print("Search student by ID? (y/n): ");
         String searchChoice = service.scanner.next();
         if (searchChoice.equals("y")) {
             service.searchById();
         }
 
+        // show grades
         System.out.print("Calculate grade? (y/n): ");
         String gradeChoice = service.scanner.next();
         if (gradeChoice.equals("y")) {
@@ -149,4 +174,3 @@ public class StudentApp {
         System.out.println("Bye!");
     }
 }
-
