@@ -1,3 +1,4 @@
+// Represents a student with name, ID, and 3 subject marks.
 public class Student {
     private String name;
     private int id;
