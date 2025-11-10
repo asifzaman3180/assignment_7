@@ -1,5 +1,5 @@
 import java.util.Scanner;
-
+// Student class to store student info and calculate average 
 public class MainApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
