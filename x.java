@@ -1,9 +1,12 @@
 import java.util.*;
 
-
+/**
+ * OOP-based Student Management Application
+ * (All logic inside one file using inner classes)
+ */
 public class StudentApp {
 
-   
+    // ---------- Inner Class: Student ----------
     static class Student {
         private String name;
         private int id;
@@ -41,20 +44,20 @@ public class StudentApp {
         }
     }
 
-    
+    // ---------- Inner Class: StudentService ----------
     static class StudentService {
 
-        
+        // Find topper
         public Student findTopper(List<Student> students) {
             return Collections.max(students, Comparator.comparingDouble(Student::getAverage));
         }
 
-        
+        // Sort by average (descending)
         public void sortByAverage(List<Student> students) {
             students.sort(Comparator.comparingDouble(Student::getAverage).reversed());
         }
 
-        
+        // Search by ID
         public Student searchById(List<Student> students, int id) {
             for (Student s : students) {
                 if (s.getId() == id) return s;
@@ -62,7 +65,7 @@ public class StudentApp {
             return null;
         }
 
-        
+        // Print grades
         public void printGrades(List<Student> students) {
             for (Student s : students) {
                 double avg = s.getAverage();
@@ -77,7 +80,7 @@ public class StudentApp {
         }
     }
 
-    
+    // ---------- Main Method ----------
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         List<Student> students = new ArrayList<>();
@@ -86,7 +89,7 @@ public class StudentApp {
         System.out.print("Enter number of students: ");
         int totalStudents = input.nextInt();
 
-        
+        // Input data
         for (int i = 0; i < totalStudents; i++) {
             System.out.println("\nStudent " + (i + 1) + ":");
             System.out.print("Enter name: ");
@@ -98,15 +101,15 @@ public class StudentApp {
             students.add(new Student(name, id, m1, m2, m3));
         }
 
-        
+        // Display all
         System.out.println("\nAll Students:");
         students.forEach(System.out::println);
 
-       
+        // Topper
         Student topper = service.findTopper(students);
         System.out.println("\nTopper: " + topper.getName() + " | Avg: " + String.format("%.2f", topper.getAverage()));
 
-        
+        // Sort
         System.out.print("\nSort by Average? (y/n): ");
         if (input.next().equalsIgnoreCase("y")) {
             service.sortByAverage(students);
@@ -114,7 +117,7 @@ public class StudentApp {
             students.forEach(System.out::println);
         }
 
-        
+        // Search
         System.out.print("\nSearch student by ID? (y/n): ");
         if (input.next().equalsIgnoreCase("y")) {
             System.out.print("Enter ID: ");
@@ -124,7 +127,7 @@ public class StudentApp {
             else System.out.println("Not found!");
         }
 
-      
+        // Grades
         System.out.print("\nCalculate grades? (y/n): ");
         if (input.next().equalsIgnoreCase("y")) {
             System.out.println("\nGrades:");
