@@ -1,5 +1,6 @@
 import java.util.*;
 
+// Class representing a student
 class Student {
     String name;
     int id;
@@ -14,13 +15,17 @@ class Student {
         this.mark3 = mark3;
     }
 
+    // Returns formatted student information
     @Override
     public String toString() {
         return "Name: " + name + " | ID: " + id + " | Average: " + average;
     }
 }
 
+// Class providing student-related services
 class StudentService {
+
+    // Calculates average marks for all students
     public void calculateAverage(List<Student> students) {
         for (Student s : students) {
             int totalSubjects = 3;
@@ -33,6 +38,7 @@ class StudentService {
         }
     }
 
+    // Finds the student with the highest average
     public Student findTopper(List<Student> students) {
         if (students.isEmpty()) return null;
         Student topStudent = students.get(0);
@@ -44,6 +50,7 @@ class StudentService {
         return topStudent;
     }
 
+    // Sorts students in descending order of average
     public void sortByAverage(List<Student> students) {
         for (int i = 0; i < students.size() - 1; i++) {
             for (int j = i + 1; j < students.size(); j++) {
@@ -56,6 +63,7 @@ class StudentService {
         }
     }
 
+    // Searches for a student by ID
     public Student searchById(List<Student> students, int id) {
         for (Student s : students) {
             if (s.id == id) return s;
@@ -63,6 +71,7 @@ class StudentService {
         return null;
     }
 
+    // Prints grade for each student based on average
     public void printGrades(List<Student> students) {
         for (Student s : students) {
             String grade;
@@ -76,12 +85,14 @@ class StudentService {
     }
 }
 
+// Main application class
 class MainApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         StudentService service = new StudentService();
         List<Student> students = new ArrayList<>();
 
+        // Input number of students
         System.out.print("Enter number of students: ");
         int numStudents = 0;
         try {
@@ -96,6 +107,7 @@ class MainApp {
             return;
         }
 
+        // Input details for each student
         for (int i = 0; i < numStudents; i++) {
             System.out.println("\nEnter details for student " + (i + 1) + ":");
             System.out.print("Name: ");
@@ -128,24 +140,29 @@ class MainApp {
             students.add(new Student(name, id, mark1, mark2, mark3));
         }
 
+        // Handle case where no valid data is entered
         if (students.isEmpty()) {
             System.out.println("No valid student data entered. Exiting.");
             return;
         }
 
+        // Calculate averages
         service.calculateAverage(students);
 
+        // Display all students
         System.out.println("\nAll Students:");
         for (Student st : students) {
             System.out.println(st);
         }
 
+        // Find and display topper
         Student topper = service.findTopper(students);
         if (topper != null)
             System.out.println("\nTopper: " + topper.name + " | Average: " + topper.average);
         else
             System.out.println("\nNo topper found (empty list).");
 
+        // Option to sort by average
         System.out.print("\nSort by Average? (y/n): ");
         String sortChoice = scanner.next();
         if (sortChoice.equalsIgnoreCase("y")) {
@@ -156,6 +173,7 @@ class MainApp {
             }
         }
 
+        // Option to search student by ID
         System.out.print("\nSearch student by ID? (y/n): ");
         String searchChoice = scanner.next();
         if (searchChoice.equalsIgnoreCase("y")) {
@@ -173,6 +191,7 @@ class MainApp {
             }
         }
 
+        // Option to print grades
         System.out.print("\nCalculate grades? (y/n): ");
         String gradeChoice = scanner.next();
         if (gradeChoice.equalsIgnoreCase("y")) {
@@ -180,6 +199,7 @@ class MainApp {
             service.printGrades(students);
         }
 
+        // Program end
         System.out.println("\nBye!");
         scanner.close();
     }
