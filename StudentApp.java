@@ -20,8 +20,14 @@ class Student {
     // Method to calculate average marks safely
     double calculateAverage() {
         int subjects = 3;
-        if (subjects == 0) return 0.0; // avoid division by zero (defensive check)
+        if (subjects == 0) return 0.0; // Avoid division by zero (defensive)
         return (marks1 + marks2 + marks3) / (double) subjects;
+    }
+
+    // toString method for cleaner display
+    @Override
+    public String toString() {
+        return String.format("Name: %-10s | ID: %-5d | Avg: %.2f", name, id, average);
     }
 }
 
@@ -136,10 +142,10 @@ public class StudentApp {
             students.add(new Student(name, id, marks1, marks2, marks3));
         }
 
-        // Display all students
+        // Display all students (using toString)
         System.out.println("\nAll Students:");
         for (Student student : students) {
-            System.out.printf("Name: %-10s ID: %-5d Avg: %.2f%n", student.name, student.id, student.average);
+            System.out.println(student);
         }
 
         // Find and display topper
@@ -154,7 +160,7 @@ public class StudentApp {
             sortByAverage(students);
             System.out.println("\nSorted List (by Average Descending):");
             for (Student student : students) {
-                System.out.printf("%-10s Avg: %.2f%n", student.name, student.average);
+                System.out.println(student);
             }
         }
 
@@ -164,7 +170,7 @@ public class StudentApp {
             int searchId = readPositiveInt(input, "Enter ID to search: ");
             Student found = searchById(students, searchId);
             if (found != null)
-                System.out.printf("Found: %s (Avg: %.2f)%n", found.name, found.average);
+                System.out.printf("Found: %s%n", found);
             else
                 System.out.println("Student with ID " + searchId + " not found.");
         }
