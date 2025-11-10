@@ -12,11 +12,16 @@ class Student {
         this.mark1 = mark1;
         this.mark2 = mark2;
         this.mark3 = mark3;
-        this.average = (mark1 + mark2 + mark3) / 3.0;
     }
 }
 
 class StudentService {
+    public void calculateAverage(List<Student> students) {
+        for (Student s : students) {
+            s.average = (s.mark1 + s.mark2 + s.mark3) / 3.0;
+        }
+    }
+
     public Student findTopper(List<Student> students) {
         Student topStudent = students.get(0);
         for (Student s : students) {
@@ -46,16 +51,20 @@ class StudentService {
         return null;
     }
 
-    public String getGrade(double average) {
-        if (average >= 80) return "A+";
-        else if (average >= 70) return "A";
-        else if (average >= 60) return "B";
-        else if (average >= 50) return "C";
-        else return "F";
+    public void printGrades(List<Student> students) {
+        for (Student s : students) {
+            String grade;
+            if (s.average >= 80) grade = "A+";
+            else if (s.average >= 70) grade = "A";
+            else if (s.average >= 60) grade = "B";
+            else if (s.average >= 50) grade = "C";
+            else grade = "F";
+            System.out.println(s.name + " | Grade: " + grade);
+        }
     }
 }
 
-class MainApp {
+public class MainApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         StudentService service = new StudentService();
@@ -76,6 +85,8 @@ class MainApp {
             int mark3 = scanner.nextInt();
             students.add(new Student(name, id, mark1, mark2, mark3));
         }
+
+        service.calculateAverage(students);
 
         System.out.println("\nAll Students:");
         for (Student st : students) {
@@ -111,10 +122,7 @@ class MainApp {
         String gradeChoice = scanner.next();
         if (gradeChoice.equalsIgnoreCase("y")) {
             System.out.println("\nGrades:");
-            for (Student st : students) {
-                String grade = service.getGrade(st.average);
-                System.out.println(st.name + " | Grade: " + grade);
-            }
+            service.printGrades(students);
         }
 
         System.out.println("\nBye!");
