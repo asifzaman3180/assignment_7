@@ -1,7 +1,8 @@
 import java.util.*;
 
 /**
- * Represents a student with basic academic information.
+ * Represents a student with their name, ID, marks, average, and grade.
+ * Provides methods to calculate averages and assign grades.
  */
 class Student {
     private String name;
@@ -11,11 +12,11 @@ class Student {
     private String grade;
 
     /**
-     * Constructs a Student object.
+     * Constructs a new Student.
      *
-     * @param name  student's name
-     * @param id    student's ID
-     * @param marks array of marks in 3 subjects
+     * @param name  The student's name.
+     * @param id    The student's unique ID.
+     * @param marks An array of marks for the student's subjects.
      */
     public Student(String name, int id, int[] marks) {
         this.name = name;
@@ -25,21 +26,23 @@ class Student {
     }
 
     /**
-     * Calculates the average marks safely.
-     * Handles cases with zero subjects to avoid division by zero.
+     * Calculates the student's average mark.
+     * Handles cases where marks are missing to avoid division by zero.
      */
     public void calculateAverage() {
         if (marks == null || marks.length == 0) {
             average = 0;
             return;
         }
-        int sum = 0;
-        for (int mark : marks) sum += mark;
-        average = sum / (double) marks.length;
+        int total = 0;
+        for (int mark : marks) {
+            total += mark;
+        }
+        average = total / (double) marks.length;
     }
 
     /**
-     * Assigns a grade based on average marks.
+     * Assigns a grade to the student based on their average mark.
      */
     public void assignGrade() {
         if (average >= 80) grade = "A+";
@@ -49,24 +52,30 @@ class Student {
         else grade = "F";
     }
 
+    /** @return The student's name. */
     public String getName() {
         return name;
     }
 
+    /** @return The student's ID. */
     public int getId() {
         return id;
     }
 
+    /** @return The student's average mark. */
     public double getAverage() {
         return average;
     }
 
+    /** @return The student's grade (may be null until assigned). */
     public String getGrade() {
         return grade;
     }
 
     /**
-     * Returns a formatted string representation of a student.
+     * Returns a readable string representation of the student.
+     *
+     * @return Formatted student information.
      */
     @Override
     public String toString() {
@@ -75,15 +84,16 @@ class Student {
 }
 
 /**
- * Provides operations for managing and analyzing students.
+ * Handles business logic related to student operations such as
+ * finding the topper, sorting, searching, and grade processing.
  */
 class StudentService {
 
     /**
-     * Finds the topper (highest average) among the students.
+     * Finds the student with the highest average.
      *
-     * @param students list of students
-     * @return topper student or null if list is empty
+     * @param students List of students.
+     * @return The topper student, or null if the list is empty.
      */
     public Student findTopper(List<Student> students) {
         if (students.isEmpty()) return null;
@@ -93,41 +103,42 @@ class StudentService {
     /**
      * Sorts students in descending order of average marks.
      *
-     * @param students list of students
+     * @param students List of students to be sorted.
      */
     public void sortByAverage(List<Student> students) {
         students.sort(Comparator.comparingDouble(Student::getAverage).reversed());
     }
 
     /**
-     * Searches for a student by their ID.
+     * Searches for a student by ID.
      *
-     * @param students list of students
-     * @param id       student ID to search
-     * @return found Student object or null
+     * @param students List of students.
+     * @param id       ID of the student to search for.
+     * @return The matching student or null if not found.
      */
     public Student searchById(List<Student> students, int id) {
-        for (Student s : students) {
-            if (s.getId() == id) return s;
+        for (Student student : students) {
+            if (student.getId() == id) return student;
         }
         return null;
     }
 
     /**
-     * Calculates and assigns grades for all students.
+     * Assigns and prints grades for all students.
      *
-     * @param students list of students
+     * @param students List of students.
      */
     public void printGrades(List<Student> students) {
-        for (Student s : students) {
-            s.assignGrade();
-            System.out.println(s.getName() + " | Grade: " + s.getGrade());
+        for (Student student : students) {
+            student.assignGrade();
+            System.out.println(student.getName() + " | Grade: " + student.getGrade());
         }
     }
 }
 
 /**
- * Main application class that handles user interaction.
+ * The main entry point for the Student Management System.
+ * Handles user interaction, input, and program control flow.
  */
 public class x {
     public static void main(String[] args) {
@@ -138,6 +149,7 @@ public class x {
         System.out.print("Enter number of students: ");
         int numStudents = safeReadInt(scanner);
 
+        // Input for each student
         for (int i = 0; i < numStudents; i++) {
             System.out.println("\nEnter details for Student " + (i + 1) + ":");
 
@@ -156,13 +168,19 @@ public class x {
             students.add(new Student(name, id, marks));
         }
 
+        // Display all students
         System.out.println("\nAll Students:");
-        for (Student s : students) System.out.println(s);
+        for (Student s : students) {
+            System.out.println(s);
+        }
 
+        // Display topper
         Student topper = service.findTopper(students);
-        if (topper != null)
+        if (topper != null) {
             System.out.println("\nTopper: " + topper.getName() + " | Average: " + topper.getAverage());
+        }
 
+        // Sort students
         System.out.print("\nSort by Average? (y/n): ");
         if (scanner.next().equalsIgnoreCase("y")) {
             service.sortByAverage(students);
@@ -170,6 +188,7 @@ public class x {
             for (Student s : students) System.out.println(s);
         }
 
+        // Search by ID
         System.out.print("\nSearch by ID? (y/n): ");
         if (scanner.next().equalsIgnoreCase("y")) {
             System.out.print("Enter ID to search: ");
@@ -181,6 +200,7 @@ public class x {
                 System.out.println("No student found with ID " + searchId);
         }
 
+        // Print grades
         System.out.print("\nPrint Grades? (y/n): ");
         if (scanner.next().equalsIgnoreCase("y")) {
             System.out.println("\nGrades:");
@@ -191,18 +211,18 @@ public class x {
     }
 
     /**
-     * Reads an integer safely from the user, handling invalid inputs.
+     * Reads an integer safely, handling invalid input using try-catch.
      *
-     * @param scanner scanner object
-     * @return a valid integer
+     * @param scanner The Scanner object for input.
+     * @return A valid integer entered by the user.
      */
     private static int safeReadInt(Scanner scanner) {
         while (true) {
             try {
                 return scanner.nextInt();
             } catch (InputMismatchException e) {
-                System.out.print("Invalid input. Please enter a valid integer: ");
-                scanner.next(); // clear invalid input
+                System.out.print("Invalid input. Please enter a valid number: ");
+                scanner.next(); // clear invalid token
             }
         }
     }
