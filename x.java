@@ -14,7 +14,11 @@ class Student {
         this.mark1 = mark1;
         this.mark2 = mark2;
         this.mark3 = mark3;
-        this.average = (mark1 + mark2 + mark3) / 3.0;
+        this.average = calculateAverage();
+    }
+
+    public double calculateAverage() {
+        return (mark1 + mark2 + mark3) / 3.0;
     }
 
     public String calculateGrade() {
@@ -27,9 +31,10 @@ class Student {
 }
 
 class StudentService {
+
     public void displayAll(List<Student> students) {
         for (Student s : students) {
-            System.out.println("Name: " + s.name + " Id: " + s.id + " Avg: " + s.average);
+            System.out.printf("Name: %s Id: %d Avg: %.2f%n", s.name, s.id, s.average);
         }
     }
 
@@ -52,7 +57,7 @@ class StudentService {
         return null;
     }
 
-    public void displayGrades(List<Student> students) {
+    public void printGrades(List<Student> students) {
         for (Student s : students) {
             System.out.println(s.name + " Grade: " + s.calculateGrade());
         }
@@ -85,7 +90,7 @@ public class x {
         service.displayAll(students);
 
         Student topper = service.findTopper(students);
-        System.out.println("Topper: " + topper.name + " Avg: " + topper.average);
+        System.out.printf("Topper: %s Avg: %.2f%n", topper.name, topper.average);
 
         System.out.println("Sort by Average? y/n");
         String choice = scanner.next();
@@ -102,7 +107,7 @@ public class x {
             int searchId = scanner.nextInt();
             Student found = service.searchById(students, searchId);
             if (found != null)
-                System.out.println("Found: " + found.name + " Avg: " + found.average);
+                System.out.printf("Found: %s Avg: %.2f%n", found.name, found.average);
             else
                 System.out.println("Not found");
         }
@@ -110,7 +115,7 @@ public class x {
         System.out.println("Calculate grade?");
         String gradeChoice = scanner.next();
         if (gradeChoice.equals("y")) {
-            service.displayGrades(students);
+            service.printGrades(students);
         }
 
         System.out.println("Bye!");
