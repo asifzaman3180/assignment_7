@@ -17,9 +17,11 @@ class Student {
         this.average = calculateAverage();
     }
 
-    // Method to calculate average marks
+    // Method to calculate average marks safely
     double calculateAverage() {
-        return (marks1 + marks2 + marks3) / 3.0;
+        int subjects = 3;
+        if (subjects == 0) return 0.0; // avoid division by zero (defensive check)
+        return (marks1 + marks2 + marks3) / (double) subjects;
     }
 }
 
@@ -66,25 +68,70 @@ public class StudentApp {
         }
     }
 
-    // Main method
+    // Utility method to safely read a positive integer
+    static int readPositiveInt(Scanner input, String prompt) {
+        int num;
+        while (true) {
+            System.out.print(prompt);
+            if (input.hasNextInt()) {
+                num = input.nextInt();
+                if (num > 0) break;
+                else System.out.println("Please enter a positive number.");
+            } else {
+                System.out.println("Invalid input. Please enter an integer.");
+                input.next(); // discard invalid input
+            }
+        }
+        return num;
+    }
+
+    // Utility method to read valid marks (0–100)
+    static int readMarks(Scanner input, String prompt) {
+        int marks;
+        while (true) {
+            System.out.print(prompt);
+            if (input.hasNextInt()) {
+                marks = input.nextInt();
+                if (marks >= 0 && marks <= 100) break;
+                else System.out.println("Marks must be between 0 and 100.");
+            } else {
+                System.out.println("Invalid input. Please enter an integer between 0 and 100.");
+                input.next();
+            }
+        }
+        return marks;
+    }
+
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         ArrayList<Student> students = new ArrayList<>();
 
-        System.out.print("Enter number of students: ");
-        int totalStudents = input.nextInt();
+        int totalStudents = readPositiveInt(input, "Enter number of students: ");
+
+        HashSet<Integer> usedIds = new HashSet<>(); // to ensure unique IDs
 
         // Input student details
         for (int i = 0; i < totalStudents; i++) {
             System.out.println("\nEnter details for student " + (i + 1));
+
             System.out.print("Name: ");
             String name = input.next();
-            System.out.print("ID: ");
-            int id = input.nextInt();
+
+            int id;
+            while (true) {
+                id = readPositiveInt(input, "ID: ");
+                if (!usedIds.contains(id)) {
+                    usedIds.add(id);
+                    break;
+                } else {
+                    System.out.println("This ID is already used. Please enter a unique ID.");
+                }
+            }
+
             System.out.println("Enter marks for 3 subjects:");
-            int marks1 = input.nextInt();
-            int marks2 = input.nextInt();
-            int marks3 = input.nextInt();
+            int marks1 = readMarks(input, "Subject 1: ");
+            int marks2 = readMarks(input, "Subject 2: ");
+            int marks3 = readMarks(input, "Subject 3: ");
 
             students.add(new Student(name, id, marks1, marks2, marks3));
         }
@@ -114,13 +161,12 @@ public class StudentApp {
         // Search by ID if user chooses
         System.out.print("\nSearch student by ID? (y/n): ");
         if (input.next().equalsIgnoreCase("y")) {
-            System.out.print("Enter ID: ");
-            int searchId = input.nextInt();
+            int searchId = readPositiveInt(input, "Enter ID to search: ");
             Student found = searchById(students, searchId);
             if (found != null)
                 System.out.printf("Found: %s (Avg: %.2f)%n", found.name, found.average);
             else
-                System.out.println("Student not found.");
+                System.out.println("Student with ID " + searchId + " not found.");
         }
 
         // Print grades if user chooses
