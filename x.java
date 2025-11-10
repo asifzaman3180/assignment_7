@@ -1,172 +1,169 @@
 import java.util.*;
 
-public class StudentManager {
-    static Scanner scanner = new Scanner(System.in);
+public class MainApp {
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        StudentService service = new StudentService();
+
         System.out.print("Enter number of students: ");
-        int numStudents = scanner.nextInt();
+        int count = readInt(scanner);
 
-        String[] names = new String[numStudents];
-        int[] ids = new int[numStudents];
-        int[] subject1 = new int[numStudents];
-        int[] subject2 = new int[numStudents];
-        int[] subject3 = new int[numStudents];
-        double[] averages = new double[numStudents];
+        // Input student data
+        for (int i = 0; i < count; i++) {
+            System.out.println("\n--- Student " + (i + 1) + " ---");
+            System.out.print("Enter name: ");
+            String name = scanner.next();
 
-        inputStudents(names, ids, subject1, subject2, subject3, averages);
+            System.out.print("Enter ID: ");
+            int id = readInt(scanner);
 
-        displayAllStudents(names, ids, averages);
+            System.out.print("Enter marks for 3 subjects: ");
+            int m1 = readInt(scanner);
+            int m2 = readInt(scanner);
+            int m3 = readInt(scanner);
 
-        int topperIndex = findTopper(averages);
-        System.out.println("\nTopper: " + names[topperIndex] + " | Average: " + averages[topperIndex]);
-
-        if (askYesNo("Sort by Average?")) {
-            sortByAverage(names, ids, subject1, subject2, subject3, averages);
-            displaySortedList(names, averages);
+            service.addStudent(new Student(id, name, m1, m2, m3));
         }
 
-        if (askYesNo("Search student by ID?")) {
-            searchStudentById(names, ids, averages);
+        // Display all students
+        System.out.println("\nAll Students:");
+        service.printAllStudents();
+
+        // Find and show topper
+        Student topper = service.findTopper();
+        if (topper != null) {
+            System.out.println("\nTopper → " + topper);
         }
 
-        if (askYesNo("Calculate grade for all students?")) {
-            calculateGrades(names, averages);
+        // Sorting
+        System.out.print("\nSort by average? (y/n): ");
+        if (scanner.next().equalsIgnoreCase("y")) {
+            service.sortByAverage();
+            System.out.println("\nSorted List:");
+            service.printAllStudents();
+        }
+
+        // Searching
+        System.out.print("\nSearch student by ID? (y/n): ");
+        if (scanner.next().equalsIgnoreCase("y")) {
+            System.out.print("Enter ID: ");
+            int searchId = readInt(scanner);
+            Student found = service.searchById(searchId);
+            if (found != null)
+                System.out.println("Found → " + found);
+            else
+                System.out.println("No student found with ID " + searchId);
+        }
+
+        // Grades
+        System.out.print("\nCalculate grades? (y/n): ");
+        if (scanner.next().equalsIgnoreCase("y")) {
+            System.out.println("\nGrades:");
+            service.printGrades();
         }
 
         System.out.println("\nBye!");
+        scanner.close();
     }
 
-    // ---- Method Definitions ---- //
-
-    // 1. Input
-    static void inputStudents(String[] names, int[] ids, int[] s1, int[] s2, int[] s3, double[] avg) {
-        double highestAverage = 0;
-
-        for (int i = 0; i < names.length; i++) {
-            System.out.println("\n--- Student " + (i + 1) + " ---");
-            System.out.print("Enter name: ");
-            names[i] = scanner.next();
-
-            System.out.print("Enter ID: ");
-            ids[i] = scanner.nextInt();
-
-            System.out.print("Enter marks of 3 subjects: ");
-            s1[i] = scanner.nextInt();
-            s2[i] = scanner.nextInt();
-            s3[i] = scanner.nextInt();
-
-            avg[i] = (s1[i] + s2[i] + s3[i]) / 3.0;
-        }
-    }
-
-    // 2. Display all students
-    static void displayAllStudents(String[] names, int[] ids, double[] averages) {
-        System.out.println("\nAll Students:");
-        for (int i = 0; i < names.length; i++) {
-            System.out.println("Name: " + names[i] + " | ID: " + ids[i] + " | Average: " + averages[i]);
-        }
-    }
-
-    // 3. Find topper index
-    static int findTopper(double[] averages) {
-        int topperIndex = 0;
-        double highestAverage = averages[0];
-        for (int i = 1; i < averages.length; i++) {
-            if (averages[i] > highestAverage) {
-                highestAverage = averages[i];
-                topperIndex = i;
-            }
-        }
-        return topperIndex;
-    }
-
-    // 4. Sort by average (descending)
-    static void sortByAverage(String[] names, int[] ids, int[] s1, int[] s2, int[] s3, double[] averages) {
-        for (int i = 0; i < averages.length - 1; i++) {
-            for (int j = i + 1; j < averages.length; j++) {
-                if (averages[i] < averages[j]) {
-                    swap(names, i, j);
-                    swap(ids, i, j);
-                    swap(s1, i, j);
-                    swap(s2, i, j);
-                    swap(s3, i, j);
-                    swap(averages, i, j);
-                }
+    /** Safely reads integer input */
+    private static int readInt(Scanner scanner) {
+        while (true) {
+            try {
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.print("Invalid input! Please enter a number: ");
+                scanner.next(); // clear invalid input
             }
         }
     }
+}
 
-    // 5. Display sorted list
-    static void displaySortedList(String[] names, double[] averages) {
-        System.out.println("\nSorted List (by Average):");
-        for (int i = 0; i < names.length; i++) {
-            System.out.println(names[i] + " | Average: " + averages[i]);
+/**
+ * Represents a student with ID, name, and marks.
+ */
+class Student {
+    private int id;
+    private String name;
+    private int mark1, mark2, mark3;
+    private double average;
+
+    public Student(int id, String name, int mark1, int mark2, int mark3) {
+        this.id = id;
+        this.name = name;
+        this.mark1 = mark1;
+        this.mark2 = mark2;
+        this.mark3 = mark3;
+        calculateAverage();
+    }
+
+    /** Calculates average safely */
+    public void calculateAverage() {
+        this.average = (mark1 + mark2 + mark3) / 3.0;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public double getAverage() { return average; }
+
+    /** Returns grade according to average */
+    public String getGrade() {
+        if (average >= 80) return "A+";
+        else if (average >= 70) return "A";
+        else if (average >= 60) return "B";
+        else if (average >= 50) return "C";
+        else return "F";
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Name: %s | ID: %d | Average: %.2f", name, id, average);
+    }
+}
+
+/**
+ * Provides services for managing Student objects.
+ */
+class StudentService {
+    private List<Student> students = new ArrayList<>();
+
+    /** Add a new student */
+    public void addStudent(Student s) {
+        students.add(s);
+    }
+
+    /** Print all students */
+    public void printAllStudents() {
+        for (Student s : students) {
+            System.out.println(s);
         }
     }
 
-    // 6. Search by ID
-    static void searchStudentById(String[] names, int[] ids, double[] averages) {
-        System.out.print("Enter ID to search: ");
-        int searchId = scanner.nextInt();
-        boolean found = false;
+    /** Find the topper student */
+    public Student findTopper() {
+        if (students.isEmpty()) return null;
+        return Collections.max(students, Comparator.comparingDouble(Student::getAverage));
+    }
 
-        for (int i = 0; i < ids.length; i++) {
-            if (ids[i] == searchId) {
-                System.out.println("Found: " + names[i] + " | Average: " + averages[i]);
-                found = true;
-                break;
-            }
+    /** Sort students by average descending */
+    public void sortByAverage() {
+        students.sort((a, b) -> Double.compare(b.getAverage(), a.getAverage()));
+    }
+
+    /** Search student by ID */
+    public Student searchById(int id) {
+        for (Student s : students) {
+            if (s.getId() == id)
+                return s;
         }
+        return null;
+    }
 
-        if (!found) {
-            System.out.println("Student not found.");
+    /** Print grades of all students */
+    public void printGrades() {
+        for (Student s : students) {
+            System.out.println(s.getName() + " → Grade: " + s.getGrade());
         }
-    }
-
-    // 7. Calculate grades
-    static void calculateGrades(String[] names, double[] averages) {
-        System.out.println("\nGrades:");
-        for (int i = 0; i < names.length; i++) {
-            String grade;
-            if (averages[i] >= 80)
-                grade = "A+";
-            else if (averages[i] >= 70)
-                grade = "A";
-            else if (averages[i] >= 60)
-                grade = "B";
-            else if (averages[i] >= 50)
-                grade = "C";
-            else
-                grade = "F";
-
-            System.out.println(names[i] + " | Grade: " + grade);
-        }
-    }
-
-    // 8. Ask yes/no question
-    static boolean askYesNo(String message) {
-        System.out.print("\n" + message + " (y/n): ");
-        String choice = scanner.next();
-        return choice.equalsIgnoreCase("y");
-    }
-
-    // 9. Swap overloads
-    static void swap(String[] arr, int i, int j) {
-        String temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-
-    static void swap(int[] arr, int i, int j) {
-        int temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-    }
-
-    static void swap(double[] arr, int i, int j) {
-        double temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
     }
 }
