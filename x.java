@@ -1,137 +1,153 @@
 import java.util.*;
+
 public class X {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
         System.out.print("Enter number of students: ");
-        int numberOfStudents = scanner.nextInt();
+        int n = scanner.nextInt();
+
+        String[] names = new String[n];
+        int[] ids = new int[n];
+        int[] m1 = new int[n];
+        int[] m2 = new int[n];
+        int[] m3 = new int[n];
+        double[] averages = new double[n];
 
 
-        String[] names = new String[numberOfStudents];
-        int[] studentIds = new int[numberOfStudents];
-        int[] marks1 = new int[numberOfStudents];
-        int[] marks2 = new int[numberOfStudents];
-        int[] marks3 = new int[numberOfStudents];
-        double[] averages = new double[numberOfStudents];
-
-        double highestAverage = 0;
-        int topperIndex = 0;
-
-
-        for (int i = 0; i < numberOfStudents; i++) {
+        for (int i = 0; i < n; i++) {
             System.out.println("\nEnter details for student " + (i + 1));
 
             System.out.print("Name: ");
             names[i] = scanner.next();
 
             System.out.print("ID: ");
-            studentIds[i] = scanner.nextInt();
+            ids[i] = scanner.nextInt();
 
-            System.out.print("Enter marks for 3 subjects: ");
-            marks1[i] = scanner.nextInt();
-            marks2[i] = scanner.nextInt();
-            marks3[i] = scanner.nextInt();
+            System.out.print("Marks in 3 subjects: ");
+            m1[i] = scanner.nextInt();
+            m2[i] = scanner.nextInt();
+            m3[i] = scanner.nextInt();
 
-            averages[i] = (marks1[i] + marks2[i] + marks3[i]) / 3.0;
-
-            if (averages[i] > highestAverage) {
-                highestAverage = averages[i];
-                topperIndex = i;
-            }
+            averages[i] = calculateAverage(m1[i], m2[i], m3[i]);
         }
 
 
-        System.out.println("\nAll Students:");
-        for (int i = 0; i < numberOfStudents; i++) {
-            System.out.printf("Name: %s | ID: %d | Avg: %.2f%n",
-                    names[i], studentIds[i], averages[i]);
-        }
+        printAllStudents(names, ids, averages);
 
-
+        int topperIndex = findTopper(averages);
         System.out.printf("%nTopper: %s | Avg: %.2f%n", names[topperIndex], averages[topperIndex]);
 
         System.out.print("\nSort by Average? (y/n): ");
-        String sortChoice = scanner.next();
-
-        if (sortChoice.equalsIgnoreCase("y")) {
-            for (int i = 0; i < numberOfStudents - 1; i++) {
-                for (int j = i + 1; j < numberOfStudents; j++) {
-                    if (averages[i] < averages[j]) {
-                        swap(names, i, j);
-                        swap(studentIds, i, j);
-                        swap(marks1, i, j);
-                        swap(marks2, i, j);
-                        swap(marks3, i, j);
-                        swap(averages, i, j);
-                    }
-                }
-            }
-
+        if (scanner.next().equalsIgnoreCase("y")) {
+            sortByAverage(names, ids, m1, m2, m3, averages);
             System.out.println("\nSorted List (by Average):");
-            for (int i = 0; i < numberOfStudents; i++) {
-                System.out.printf("%s | Avg: %.2f%n", names[i], averages[i]);
-            }
+            printAllStudents(names, ids, averages);
         }
 
         System.out.print("\nSearch student by ID? (y/n): ");
-        String searchChoice = scanner.next();
-
-        if (searchChoice.equalsIgnoreCase("y")) {
+        if (scanner.next().equalsIgnoreCase("y")) {
             System.out.print("Enter ID: ");
-            int searchId = scanner.nextInt();
-            boolean found = false;
-
-            for (int i = 0; i < numberOfStudents; i++) {
-                if (studentIds[i] == searchId) {
-                    System.out.printf("Found: %s | Avg: %.2f%n", names[i], averages[i]);
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                System.out.println("Student not found.");
-            }
+            int sid = scanner.nextInt();
+            searchById(names, ids, averages, sid);
         }
 
+
         System.out.print("\nCalculate grades? (y/n): ");
-        String gradeChoice = scanner.next();
-
-        if (gradeChoice.equalsIgnoreCase("y")) {
-            for (int i = 0; i < numberOfStudents; i++) {
-                String grade;
-                double avg = averages[i];
-
-                if (avg >= 80) grade = "A+";
-                else if (avg >= 70) grade = "A";
-                else if (avg >= 60) grade = "B";
-                else if (avg >= 50) grade = "C";
-                else grade = "F";
-
-                System.out.printf("%s → Grade: %s%n", names[i], grade);
-            }
+        if (scanner.next().equalsIgnoreCase("y")) {
+            printGrades(names, averages);
         }
 
         System.out.println("\nBye!");
         scanner.close();
     }
 
-    private static void swap(String[] array, int i, int j) {
-        String temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+
+    private static double calculateAverage(int m1, int m2, int m3) {
+        return (m1 + m2 + m3) / 3.0;
     }
 
-    private static void swap(int[] array, int i, int j) {
-        int temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+    private static int findTopper(double[] averages) {
+        int index = 0;
+        double top = averages[0];
+        for (int i = 1; i < averages.length; i++) {
+            if (averages[i] > top) {
+                top = averages[i];
+                index = i;
+            }
+        }
+        return index;
     }
 
-    private static void swap(double[] array, int i, int j) {
-        double temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+    private static void sortByAverage(String[] names, int[] ids,
+                                      int[] m1, int[] m2, int[] m3, double[] averages) {
+        for (int i = 0; i < averages.length - 1; i++) {
+            for (int j = i + 1; j < averages.length; j++) {
+                if (averages[i] < averages[j]) {
+                    swap(names, i, j);
+                    swap(ids, i, j);
+                    swap(m1, i, j);
+                    swap(m2, i, j);
+                    swap(m3, i, j);
+                    swap(averages, i, j);
+                }
+            }
+        }
+    }
+
+    private static void searchById(String[] names, int[] ids, double[] averages, int searchId) {
+        boolean found = false;
+        for (int i = 0; i < ids.length; i++) {
+            if (ids[i] == searchId) {
+                System.out.printf("Found: %s | Avg: %.2f%n", names[i], averages[i]);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Student not found.");
+        }
+    }
+
+    private static void printGrades(String[] names, double[] averages) {
+        for (int i = 0; i < averages.length; i++) {
+            String grade;
+            double avg = averages[i];
+
+            if (avg >= 80) grade = "A+";
+            else if (avg >= 70) grade = "A";
+            else if (avg >= 60) grade = "B";
+            else if (avg >= 50) grade = "C";
+            else grade = "F";
+
+            System.out.printf("%s → Grade: %s%n", names[i], grade);
+        }
+    }
+
+    private static void printAllStudents(String[] names, int[] ids, double[] averages) {
+        System.out.println("\nAll Students:");
+        for (int i = 0; i < names.length; i++) {
+            System.out.printf("Name: %s | ID: %d | Avg: %.2f%n", names[i], ids[i], averages[i]);
+        }
+    }
+
+
+    private static void swap(String[] arr, int i, int j) {
+        String temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    private static void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    private static void swap(double[] arr, int i, int j) {
+        double temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
     }
 }
