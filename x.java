@@ -1,96 +1,189 @@
 import java.util.*;
-public class x{
-public static void main(String args[]){
-Scanner s=new Scanner(System.in);
-System.out.println("Enter no. of students: ");
-int n=s.nextInt();
-String nm[]=new String[n];
-int id[]=new int[n];
-int m1[]=new int[n];
-int m2[]=new int[n];
-int m3[]=new int[n];
-double avg[]=new double[n];
-double top=0;
-int topIndex=0;
-for(int i=0;i<n;i++){
-System.out.println("Enter name:");
-nm[i]=s.next();
-System.out.println("Enter id:");
-id[i]=s.nextInt();
-System.out.println("Enter marks of 3 subjects:");
-m1[i]=s.nextInt();
-m2[i]=s.nextInt();
-m3[i]=s.nextInt();
-avg[i]=(m1[i]+m2[i]+m3[i])/3.0;
-if(avg[i]>top){
-top=avg[i];
-topIndex=i;
-}
-}
-System.out.println("All Students:");
-for(int i=0;i<n;i++){
-System.out.println("Name:"+nm[i]+" Id:"+id[i]+" Avg:"+avg[i]);
-}
-System.out.println("Topper: "+nm[topIndex]+" Avg:"+avg[topIndex]);
-System.out.println("Sort by Average? y/n");
-String c=s.next();
-if(c.equals("y")){
-for(int i=0;i<n-1;i++){
-for(int j=i+1;j<n;j++){
-if(avg[i]<avg[j]){
-String tnm=nm[i];
-nm[i]=nm[j];
-nm[j]=tnm;
-int tid=id[i];
-id[i]=id[j];
-id[j]=tid;
-int tm1=m1[i];
-m1[i]=m1[j];
-m1[j]=tm1;
-int tm2=m2[i];
-m2[i]=m2[j];
-m2[j]=tm2;
-int tm3=m3[i];
-m3[i]=m3[j];
-m3[j]=tm3;
-double tav=avg[i];
-avg[i]=avg[j];
-avg[j]=tav;
-}
-}
-}
-System.out.println("Sorted List:");
-for(int i=0;i<n;i++){
-System.out.println(nm[i]+" "+avg[i]);
-}
-}
-System.out.println("Search student by id?");
-String d=s.next();
-if(d.equals("y")){
-System.out.println("Enter id:");
-int sid=s.nextInt();
-boolean f=false;
-for(int i=0;i<n;i++){
-if(id[i]==sid){
-System.out.println("Found:"+nm[i]+" Avg:"+avg[i]);
-f=true;
-}
-}
-if(!f) System.out.println("Not found");
-}
-System.out.println("Calculate grade?");
-String g=s.next();
-if(g.equals("y")){
-for(int i=0;i<n;i++){
-String grade="";
-if(avg[i]>=80) grade="A+";
-else if(avg[i]>=70) grade="A";
-else if(avg[i]>=60) grade="B";
-else if(avg[i]>=50) grade="C";
-else grade="F";
-System.out.println(nm[i]+" Grade:"+grade);
-}
-}
-System.out.println("Bye!");
-}
+
+public class StudentManagementApp {
+
+    /*
+       CLASS 1: Student (Data Model)
+     */
+    public static class Student {
+        private String name;
+        private int id;
+        private int mark1, mark2, mark3;
+        private double average;
+        private String grade;
+
+        /* Constructor */
+        public Student(String name, int id, int mark1, int mark2, int mark3) {
+            this.name = name;
+            this.id = id;
+            this.mark1 = mark1;
+            this.mark2 = mark2;
+            this.mark3 = mark3;
+            calculateAverage();
+        }
+
+        /* Calculates average marks safely. */
+        public void calculateAverage() {
+            int totalSubjects = 3;
+            this.average = (mark1 + mark2 + mark3) / (double) totalSubjects;
+        }
+
+        /* Determines grade based on average. */
+        public void calculateGrade() {
+            if (average >= 80) grade = "A+";
+            else if (average >= 70) grade = "A";
+            else if (average >= 60) grade = "B";
+            else if (average >= 50) grade = "C";
+            else grade = "F";
+        }
+
+        // Getters
+        public String getName() { return name; }
+        public int getId() { return id; }
+        public double getAverage() { return average; }
+        public String getGrade() { return grade; }
+
+        /* Returns a readable representation of the student. */
+        @Override
+        public String toString() {
+            return String.format("Name: %-10s | ID: %-5d | Average: %-6.2f | Grade: %s",
+                    name, id, average, (grade != null ? grade : "N/A"));
+        }
+    }
+
+    /*
+       CLASS 2: StudentService (Logic)
+     */
+    public static class StudentService {
+
+        
+        public Student findTopper(List<Student> students) {
+            if (students == null || students.isEmpty()) return null;
+            return Collections.max(students, Comparator.comparingDouble(Student::getAverage));
+        }
+
+        
+        public void sortByAverage(List<Student> students) {
+            if (students != null) {
+                students.sort(Comparator.comparingDouble(Student::getAverage).reversed());
+            }
+        }
+
+        /* Searches for a student by ID. Returns null if not found. */
+        public Student searchById(List<Student> students, int id) {
+            if (students == null) return null;
+            for (Student s : students) {
+                if (s.getId() == id) return s;
+            }
+            return null;
+        }
+
+        /* Calculates grades for all students. */
+        public void calculateGrades(List<Student> students) {
+            if (students == null) return;
+            for (Student s : students) {
+                s.calculateGrade();
+            }
+        }
+
+        /** Displays all students neatly. */
+        public void displayAllStudents(List<Student> students) {
+            if (students == null || students.isEmpty()) {
+                System.out.println("No students available.");
+                return;
+            }
+            students.forEach(System.out::println);
+        }
+    }
+
+    /*
+      CLASS 3: MainApp (User Interaction)
+    */
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        StudentService service = new StudentService();
+        List<Student> students = new ArrayList<>();
+
+        System.out.print("Enter number of students: ");
+        int studentCount = getValidIntegerInput(scanner);
+
+        // Input student data
+        for (int i = 0; i < studentCount; i++) {
+            System.out.println("\n--- Enter details for Student " + (i + 1) + " ---");
+            students.add(readStudentDetails(scanner));
+        }
+
+        System.out.println("\nAll Students:");
+        service.displayAllStudents(students);
+
+        // Display topper
+        Student topper = service.findTopper(students);
+        if (topper != null) {
+            System.out.printf("\nTopper: %s | Average: %.2f%n", topper.getName(), topper.getAverage());
+        }
+
+        // Sort by average
+        if (askYesNo(scanner, "\nSort by average? (y/n): ")) {
+            service.sortByAverage(students);
+            System.out.println("\nSorted Students (by average descending):");
+            service.displayAllStudents(students);
+        }
+
+        // Search by ID
+        if (askYesNo(scanner, "\nSearch student by ID? (y/n): ")) {
+            System.out.print("Enter ID: ");
+            int searchId = getValidIntegerInput(scanner);
+            Student found = service.searchById(students, searchId);
+            if (found != null) System.out.println("Found: " + found);
+            else System.out.println("Student not found.");
+        }
+
+        // Calculate grades
+        if (askYesNo(scanner, "\nCalculate grades? (y/n): ")) {
+            service.calculateGrades(students);
+            System.out.println("\nGrades Assigned:");
+            service.displayAllStudents(students);
+        }
+
+        System.out.println("\nProgram ended. Goodbye!");
+        scanner.close();
+    }
+
+    /*
+      HELPER METHODS
+    */
+
+    /* Safely reads integer input. */
+    private static int getValidIntegerInput(Scanner scanner) {
+        while (true) {
+            try {
+                return Integer.parseInt(scanner.next());
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+            }
+        }
+    }
+
+    /** Reads a student’s details safely. */
+    private static Student readStudentDetails(Scanner scanner) {
+        System.out.print("Name: ");
+        String name = scanner.next();
+
+        System.out.print("ID: ");
+        int id = getValidIntegerInput(scanner);
+
+        System.out.print("Enter marks for 3 subjects: ");
+        int mark1 = getValidIntegerInput(scanner);
+        int mark2 = getValidIntegerInput(scanner);
+        int mark3 = getValidIntegerInput(scanner);
+
+        return new Student(name, id, mark1, mark2, mark3);
+    }
+
+    /* Asks the user a yes/no question. */
+    private static boolean askYesNo(Scanner scanner, String message) {
+        System.out.print(message);
+        String response = scanner.next().trim().toLowerCase();
+        return response.equals("y") || response.equals("yes");
+    }
 }
