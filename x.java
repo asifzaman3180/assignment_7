@@ -1,5 +1,8 @@
 import java.util.*;
 
+/**
+ * Represents a student with name, ID, marks, average, and grade.
+ */
 class Student {
     private String name;
     private int id;
@@ -7,6 +10,15 @@ class Student {
     private double average;
     private String grade;
 
+    /**
+     * Constructs a Student with name, ID, and marks.
+     *
+     * @param name  Name of the student
+     * @param id    ID of the student
+     * @param mark1 Marks in subject 1
+     * @param mark2 Marks in subject 2
+     * @param mark3 Marks in subject 3
+     */
     public Student(String name, int id, int mark1, int mark2, int mark3) {
         this.name = name;
         this.id = id;
@@ -17,10 +29,16 @@ class Student {
         this.grade = "";
     }
 
+    /**
+     * Calculates the average marks of the student.
+     */
     public void calculateAverage() {
         this.average = (mark1 + mark2 + mark3) / 3.0;
     }
 
+    /**
+     * Calculates the grade of the student based on average.
+     */
     public void calculateGrade() {
         if (average >= 80) grade = "A+";
         else if (average >= 70) grade = "A";
@@ -45,12 +63,20 @@ class Student {
         return grade;
     }
 
+    /**
+     * Returns a string representation of the student.
+     *
+     * @return Student details as a string
+     */
     @Override
     public String toString() {
         return "Name: " + name + " ID: " + id + " Avg: " + average;
     }
 }
 
+/**
+ * Handles operations on a list of students, such as sorting, searching, and grading.
+ */
 class StudentService {
     private ArrayList<Student> students;
 
@@ -58,10 +84,18 @@ class StudentService {
         students = new ArrayList<>();
     }
 
+    /**
+     * Adds a student to the list.
+     *
+     * @param s Student to add
+     */
     public void addStudent(Student s) {
         students.add(s);
     }
 
+    /**
+     * Prints details of all students.
+     */
     public void printAllStudents() {
         if (students.isEmpty()) {
             System.out.println("No students available.");
@@ -72,6 +106,11 @@ class StudentService {
         }
     }
 
+    /**
+     * Finds the student with the highest average.
+     *
+     * @return Topper student, or null if no students
+     */
     public Student findTopper() {
         if (students.isEmpty()) return null;
         Student topper = students.get(0);
@@ -83,10 +122,19 @@ class StudentService {
         return topper;
     }
 
+    /**
+     * Sorts the students by average in descending order.
+     */
     public void sortByAverage() {
         students.sort((a, b) -> Double.compare(b.getAverage(), a.getAverage()));
     }
 
+    /**
+     * Searches for a student by ID.
+     *
+     * @param id ID to search for
+     * @return Student if found, else null
+     */
     public Student searchById(int id) {
         for (Student s : students) {
             if (s.getId() == id) return s;
@@ -94,6 +142,9 @@ class StudentService {
         return null;
     }
 
+    /**
+     * Prints grades of all students after calculating them.
+     */
     public void printGrades() {
         for (Student s : students) {
             s.calculateGrade();
@@ -101,11 +152,19 @@ class StudentService {
         }
     }
 
+    /**
+     * Checks if there are any students in the list.
+     *
+     * @return true if students exist, false otherwise
+     */
     public boolean hasStudents() {
         return !students.isEmpty();
     }
 }
 
+/**
+ * Main application class that handles user input/output.
+ */
 public class MainApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -175,6 +234,12 @@ public class MainApp {
         System.out.println("\nBye!");
     }
 
+    /**
+     * Reads an integer safely from Scanner, defaults to 0 if invalid.
+     *
+     * @param scanner Scanner object
+     * @return integer input or 0 if invalid
+     */
     private static int safeNextInt(Scanner scanner) {
         int val = 0;
         try {
