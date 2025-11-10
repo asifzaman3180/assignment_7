@@ -22,6 +22,7 @@ m1[i]=s.nextInt();
 m2[i]=s.nextInt();
 m3[i]=s.nextInt();
 avg[i]=(m1[i]+m2[i]+m3[i])/3.0;
+
 if(avg[i]>top){
 top=avg[i];
 topIndex=i;
