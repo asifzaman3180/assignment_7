@@ -1,18 +1,51 @@
 import java.util.*;
 
 public class Student_info {
-    public static void main(String args[]) {
-        Scanner s = new Scanner(System.in);
-        System.out.println("Enter no. of students: ");
+
+    static Scanner s = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        System.out.print("Enter number of students: ");
         int n = s.nextInt();
-        String nm[] = new String[n];
-        int id[] = new int[n];
-        int m1[] = new int[n];
-        int m2[] = new int[n];
-        int m3[] = new int[n];
-        double avg[] = new double[n];
-        double top = 0;
-        int topIndex = 0;
+
+        String[] nm = new String[n];
+        int[] id = new int[n];
+        int[] m1 = new int[n];
+        int[] m2 = new int[n];
+        int[] m3 = new int[n];
+        double[] avg = new double[n];
+
+        inputStudentData(n, nm, id, m1, m2, m3, avg);
+
+        displayAllStudents(n, nm, id, avg);
+
+        int topIndex = findTopper(n, avg);
+        System.out.println("Topper: " + nm[topIndex] + " Avg: " + avg[topIndex]);
+
+        System.out.print("Sort by Average? (y/n): ");
+        if (s.next().equalsIgnoreCase("y")) {
+            System.out.println("Sorted List:");
+            for (int i = 0; i < n; i++) {
+                System.out.println(nm[i] + " " + avg[i]);
+            }
+        }
+
+        System.out.print("Search student by id? (y/n): ");
+        if (s.next().equalsIgnoreCase("y")) {
+            searchById(n, id, nm, avg);
+        }
+
+        System.out.print("Calculate grade? (y/n): ");
+        if (s.next().equalsIgnoreCase("y")) {
+            calculateGrades(n, nm, avg);
+        }
+
+        System.out.println("Bye!");
+    }
+
+    // ------------------- Functions -------------------
+
+    static void inputStudentData(int n, String[] nm, int[] id, int[] m1, int[] m2, int[] m3, double[] avg) {
         for (int i = 0; i < n; i++) {
             System.out.println("Enter name:");
             nm[i] = s.next();
@@ -23,81 +56,58 @@ public class Student_info {
             m2[i] = s.nextInt();
             m3[i] = s.nextInt();
             avg[i] = (m1[i] + m2[i] + m3[i]) / 3.0;
+        }
+    }
+
+    static void displayAllStudents(int n, String[] nm, int[] id, double[] avg) {
+        System.out.println("\nAll Students:");
+        for (int i = 0; i < n; i++) {
+            System.out.println("Name: " + nm[i] + " Id: " + id[i] + " Avg: " + avg[i]);
+        }
+    }
+
+    static int findTopper(int n, double[] avg) {
+        double top = avg[0];
+        int topIndex = 0;
+        for (int i = 1; i < n; i++) {
             if (avg[i] > top) {
                 top = avg[i];
                 topIndex = i;
             }
         }
-        System.out.println("All Students:");
+        return topIndex;
+    }
+
+    static void searchById(int n, int[] id, String[] nm, double[] avg) {
+        System.out.print("Enter id: ");
+        int sid = s.nextInt();
+        boolean found = false;
         for (int i = 0; i < n; i++) {
-            System.out.println("Name:" + nm[i] + " Id:" + id[i] + " Avg:" + avg[i]);
-        }
-        System.out.println("Topper: " + nm[topIndex] + " Avg:" + avg[topIndex]);
-        System.out.println("Sort by Average? y/n");
-        String c = s.next();
-        if (c.equals("y")) {
-            for (int i = 0; i < n - 1; i++) {
-                for (int j = i + 1; j < n; j++) {
-                    if (avg[i] < avg[j]) {
-                        String tnm = nm[i];
-                        nm[i] = nm[j];
-                        nm[j] = tnm;
-                        int tid = id[i];
-                        id[i] = id[j];
-                        id[j] = tid;
-                        int tm1 = m1[i];
-                        m1[i] = m1[j];
-                        m1[j] = tm1;
-                        int tm2 = m2[i];
-                        m2[i] = m2[j];
-                        m2[j] = tm2;
-                        int tm3 = m3[i];
-                        m3[i] = m3[j];
-                        m3[j] = tm3;
-                        double tav = avg[i];
-                        avg[i] = avg[j];
-                        avg[j] = tav;
-                    }
-                }
-            }
-            System.out.println("Sorted List:");
-            for (int i = 0; i < n; i++) {
-                System.out.println(nm[i] + " " + avg[i]);
+            if (id[i] == sid) {
+                System.out.println("Found: " + nm[i] + " Avg: " + avg[i]);
+                found = true;
+                break;
             }
         }
-        System.out.println("Search student by id?");
-        String d = s.next();
-        if (d.equals("y")) {
-            System.out.println("Enter id:");
-            int sid = s.nextInt();
-            boolean f = false;
-            for (int i = 0; i < n; i++) {
-                if (id[i] == sid) {
-                    System.out.println("Found:" + nm[i] + " Avg:" + avg[i]);
-                    f = true;
-                }
-            }
-            if (!f)
-                System.out.println("Not found");
+        if (!found)
+            System.out.println("Not found");
+    }
+
+    static void calculateGrades(int n, String[] nm, double[] avg) {
+        System.out.println("\nGrades:");
+        for (int i = 0; i < n; i++) {
+            String grade;
+            if (avg[i] >= 80)
+                grade = "A+";
+            else if (avg[i] >= 70)
+                grade = "A";
+            else if (avg[i] >= 60)
+                grade = "B";
+            else if (avg[i] >= 50)
+                grade = "C";
+            else
+                grade = "F";
+            System.out.println(nm[i] + " Grade: " + grade);
         }
-        System.out.println("Calculate grade?");
-        String g = s.next();
-        if (g.equals("y")) {
-            for (int i = 0; i < n; i++) {
-                String grade = "";
-                if (avg[i] >= 80)
-                    grade = "A+";
-                else if (avg[i] >= 70)
-                    grade = "A";
-                else if (avg[i] >= 60)
-                    grade = "B";
-                else if (avg[i] >= 50)
-                    grade = "C";
-                else
-                    grade = "F";
-                System.out.println(nm[i] + " Grade:" + grade);
-            }
-        }
-        System.out.println("Bye!");
     }
 }
