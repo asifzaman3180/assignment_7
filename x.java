@@ -2,141 +2,131 @@ import java.util.*;
 
 public class x{
 
-    static void Results(int Total) {
-        Scanner s = new Scanner(System.in);
-        String name[]=new String[Total];
-        int Student_ID[]=new int[Total];
-        int Subject1_mark[]=new int[Total];
-        int Subject2_mark[]=new int[Total];
-        int Subject3_mark[]=new int[Total];
-        double Average_marks[]=new double[Total];
+    public static void main(String args[]) {
+        Scanner s=new Scanner(System.in);
+        System.out.println("Enter no. of students: ");
+        int Total=s.nextInt();
+
+        Students manager=new Students(Total,s);
+        manager.Students_entry();
+
+        System.out.println("Sort by Average? y/n");
+        String c=s.next();
+        if(c.equals("y")) manager.Sort();
+
+        System.out.println("Search student by Student_Student_ID?");
+        String d=s.next();
+        if(d.equals("y")) manager.Search();
+
+        System.out.println("Calculate grade?");
+        String g=s.next();
+        if(g.equals("y")) manager.Print_grades();
+
+        System.out.println("Bye!");
+    }
+}
+
+class Student {
+    String name;
+    int Student_ID;
+    int Student_1;
+    int Student_2;
+    int Student_3;
+    double average;
+
+    Student(String name,int Student_ID,int Student_1,int Student_2,int Student_3) {
+        this.name=name;this.Student_ID=Student_ID;this.Student_1=Student_1;this.Student_2=Student_2;this.Student_3=Student_3;
+        Calculate_average();
+    }
+
+    void Calculate_average() {
+        average=(Student_1+Student_2+Student_3)/3.0;
+    }
+
+    String grade() {
+        if(average>=80) 
+            return "A+";
+        else if(average>=70) 
+            return "A";
+        else if(average>=60) 
+            return "B";
+        else if(average>=50) 
+            return "C";
+        else 
+            return "F";
+    }
+}
+
+class Students {
+    Student[] students;
+    int total;
+    Scanner s;
+
+    Students(int total,Scanner scanner) {
+        this.total=total;
+        this.s=scanner;
+        students=new Student[total];
+    }
+
+    void Students_entry() {
         double top=0;
         int topIndex=0;
-
-        for(int i=0;i<Total;i++) {
+        for(int i=0;i<total;i++) {
             System.out.println("Enter name:");
-            name[i]=s.next();
-            System.out.println("Enter Student_ID:");
-            Student_ID[i]=s.nextInt();
+            String name=s.next();
+            System.out.println("Enter Student_Student_ID:");
+            int Student_ID=s.nextInt();
             System.out.println("Enter marks of 3 subjects:");
-            Subject1_mark[i]=s.nextInt();
-            Subject2_mark[i]=s.nextInt();
-            Subject3_mark[i]=s.nextInt();
-            Average_marks[i]=(Subject1_mark[i]+Subject2_mark[i]+Subject3_mark[i])/3.0;
-            if(Average_marks[i]>top) {
-                top=Average_marks[i];
+            int m1=s.nextInt();
+            int m2=s.nextInt();
+            int m3=s.nextInt();
+            Student st=new Student(name,Student_ID,m1,m2,m3);
+            students[i]=st;
+            if(st.average>top) {
+                top=st.average;
                 topIndex=i;
             }
         }
 
         System.out.println("All Students:");
-
-        for(int i=0;i<Total;i++) {
-            System.out.println("Name:"+name[i]+" Student_ID:"+Student_ID[i]+" Average_marks:"+Average_marks[i]);
+        for(int i=0;i<total;i++) {
+            System.out.println("Name:"+students[i].name+" Student_Student_ID:"+students[i].Student_ID+" Average_marks:"+students[i].average);
         }
 
-        System.out.println("Topper: "+name[topIndex]+" Average_marks:"+Average_marks[topIndex]);
-        
+        System.out.println("Topper: "+students[topIndex].name+" Average_marks:"+students[topIndex].average);
     }
 
-    static void Sort_Students(String name[], double Average_marks[], int Subject1_mark[], int Subject2_mark[], int Subject3_mark[], int Student_ID[], int Total, String c) {
-        if(c.equals("y")) {
-            for(int i=0;i<Total-1;i++) {
-                for(int j=i+1;j<Total;j++) {
-                    if(Average_marks[i]<Average_marks[j]) {
-                    String Temp_Name=name[i];
-                    name[i]=name[j];
-                    name[j]=Temp_Name;
-                    int Temp_ID=Student_ID[i];
-                    Student_ID[i]=Student_ID[j];
-                    Student_ID[j]=Temp_ID;
-                    int Temp1_mark=Subject1_mark[i];
-                    Subject1_mark[i]=Subject1_mark[j];
-                    Subject1_mark[j]=Temp1_mark;
-                    int Temp2_mark=Subject2_mark[i];
-                    Subject2_mark[i]=Subject2_mark[j];
-                    Subject2_mark[j]=Temp2_mark;
-                    int Temp3_mark=Subject3_mark[i];
-                    Subject3_mark[i]=Subject3_mark[j];
-                    Subject3_mark[j]=Temp3_mark;
-                    double Temp_average=Average_marks[i];
-                    Average_marks[i]=Average_marks[j];
-                    Average_marks[j]=Temp_average;
-                    }
+    void Sort() {
+        for(int i=0;i<total-1;i++) {
+            for(int j=i+1;j<total;j++) {
+                if(students[i].average<students[j].average) {
+                    Student temp=students[i];
+                    students[i]=students[j];
+                    students[j]=temp;
                 }
             }
-            System.out.println("Sorted List:");
-            for(int i=0;i<Total;i++) {
-                System.out.println(name[i]+" "+Average_marks[i]);
-            }
+        }
+        System.out.println("Sorted List:");
+        for(int i=0;i<total;i++) {
+            System.out.println(students[i].name+" "+students[i].average);
         }
     }
 
-    static void Search_ID(String name[], double Average_marks[], int Student_ID[], String d, int Total) {
-
-        if(d.equals("y")) {
-            Scanner s = new Scanner(System.in);
-
-            System.out.println("Enter Student_ID:");
-            int Temp_ID=s.nextInt();
-            boolean f=false;
-            for(int i=0;i<Total;i++) {
-                if(Student_ID[i]==Temp_ID) {
-                System.out.println("Found:"+name[i]+" Average_marks:"+Average_marks[i]);
+    void Search() {
+        System.out.println("Enter Student_Student_ID:");
+        int Temp_Student_ID=s.nextInt();
+        boolean f=false;
+        for(int i=0;i<total;i++) {
+            if(students[i].Student_ID==Temp_Student_ID) {
+                System.out.println("Found:"+students[i].name+" Average_marks:"+students[i].average);
                 f=true;
             }
-            }
-            if(!f) System.out.println("Not found");
         }
     }
 
-    static void Calculate_grade(double Average_marks[], String name[], String g, int Total) {
-        if(g.equals("y")) {
-            for(int i=0;i<Total;i++) {
-                String grade="";
-                if(Average_marks[i]>=80) 
-                    grade="A+";
-                else if(Average_marks[i]>=70) 
-                    grade="A";
-                else if(Average_marks[i]>=60) 
-                    grade="B";
-                else if(Average_marks[i]>=50) 
-                    grade="C";
-                else 
-                    grade="F";
-                System.out.println(name[i]+" Grade:"+grade);
-            }
+    void Print_grades() {
+        for(int i=0;i<total;i++) {
+            System.out.println(students[i].name+" Grade:"+students[i].grade());
         }
-    }
-
-    public static void main(String args[]) {
-        Scanner s = new Scanner(System.in);
-        System.out.println("Enter no. of students: ");
-        int Total=s.nextInt();
-        String name[]=new String[Total];
-        int Student_ID[]=new int[Total];
-        int Subject1_mark[]=new int[Total];
-        int Subject2_mark[]=new int[Total];
-        int Subject3_mark[]=new int[Total];
-        double Average_marks[]=new double[Total];
-
-        Results(Total);
-
-        System.out.println("Sort by Average? y/n");
-        String c=s.next();
-
-        Sort_Students(name, Average_marks, Subject1_mark, Subject2_mark, Subject3_mark, Student_ID, Total, c);
-        
-        System.out.println("Search student by Student_ID?");
-        String d=s.next();
-        
-        Search_ID(name, Average_marks, Student_ID, d, Total);
-
-        System.out.println("Calculate grade?");
-        String g=s.next();
-
-        Calculate_grade(Average_marks, name, g, Total);
-        
-        System.out.println("Bye!");
     }
 }
