@@ -1,27 +1,46 @@
 import java.util.*;
 
+/**
+ * Represents a student with basic academic information.
+ */
 class Student {
     private String name;
     private int id;
-    private int subject1;
-    private int subject2;
-    private int subject3;
+    private int[] marks;
     private double average;
     private String grade;
 
-    public Student(String name, int id, int subject1, int subject2, int subject3) {
+    /**
+     * Constructs a Student object.
+     *
+     * @param name  student's name
+     * @param id    student's ID
+     * @param marks array of marks in 3 subjects
+     */
+    public Student(String name, int id, int[] marks) {
         this.name = name;
         this.id = id;
-        this.subject1 = subject1;
-        this.subject2 = subject2;
-        this.subject3 = subject3;
+        this.marks = marks;
         calculateAverage();
     }
 
-    private void calculateAverage() {
-        this.average = (subject1 + subject2 + subject3) / 3.0;
+    /**
+     * Calculates the average marks safely.
+     * Handles cases with zero subjects to avoid division by zero.
+     */
+    public void calculateAverage() {
+        if (marks == null || marks.length == 0) {
+            average = 0;
+            return;
+        }
+        int sum = 0;
+        for (int mark : marks) sum += mark;
+        average = sum / (double) marks.length;
     }
 
+    /**
+     * Assigns a grade based on average marks.
+     */
     public void assignGrade() {
         if (average >= 80) grade = "A+";
         else if (average >= 70) grade = "A";
@@ -45,23 +64,48 @@ class Student {
     public String getGrade() {
         return grade;
     }
+
+    /**
+     * Returns a formatted string representation of a student.
+     */
+    @Override
+    public String toString() {
+        return String.format("Name: %-10s | ID: %-5d | Average: %.2f", name, id, average);
+    }
 }
 
+/**
+ * Provides operations for managing and analyzing students.
+ */
 class StudentService {
+
+    /**
+     * Finds the topper (highest average) among the students.
+     *
+     * @param students list of students
+     * @return topper student or null if list is empty
+     */
     public Student findTopper(List<Student> students) {
-        Student top = students.get(0);
-        for (Student s : students) {
-            if (s.getAverage() > top.getAverage()) {
-                top = s;
-            }
-        }
-        return top;
+        if (students.isEmpty()) return null;
+        return Collections.max(students, Comparator.comparingDouble(Student::getAverage));
     }
 
+    /**
+     * Sorts students in descending order of average marks.
+     *
+     * @param students list of students
+     */
     public void sortByAverage(List<Student> students) {
-        students.sort((a, b) -> Double.compare(b.getAverage(), a.getAverage()));
+        students.sort(Comparator.comparingDouble(Student::getAverage).reversed());
     }
 
+    /**
+     * Searches for a student by their ID.
+     *
+     * @param students list of students
+     * @param id       student ID to search
+     * @return found Student object or null
+     */
     public Student searchById(List<Student> students, int id) {
         for (Student s : students) {
             if (s.getId() == id) return s;
@@ -69,72 +113,97 @@ class StudentService {
         return null;
     }
 
-    public void calculateGrades(List<Student> students) {
+    /**
+     * Calculates and assigns grades for all students.
+     *
+     * @param students list of students
+     */
+    public void printGrades(List<Student> students) {
         for (Student s : students) {
             s.assignGrade();
+            System.out.println(s.getName() + " | Grade: " + s.getGrade());
         }
     }
 }
 
+/**
+ * Main application class that handles user interaction.
+ */
 public class x {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         StudentService service = new StudentService();
-
-        System.out.print("Enter number of students: ");
-        int numStudents = scanner.nextInt();
         List<Student> students = new ArrayList<>();
 
+        System.out.print("Enter number of students: ");
+        int numStudents = safeReadInt(scanner);
+
         for (int i = 0; i < numStudents; i++) {
-            System.out.print("Enter name: ");
+            System.out.println("\nEnter details for Student " + (i + 1) + ":");
+
+            System.out.print("Name: ");
             String name = scanner.next();
-            System.out.print("Enter ID: ");
-            int id = scanner.nextInt();
-            System.out.print("Enter marks of 3 subjects: ");
-            int s1 = scanner.nextInt();
-            int s2 = scanner.nextInt();
-            int s3 = scanner.nextInt();
-            students.add(new Student(name, id, s1, s2, s3));
+
+            System.out.print("ID: ");
+            int id = safeReadInt(scanner);
+
+            int[] marks = new int[3];
+            for (int j = 0; j < 3; j++) {
+                System.out.print("Enter mark for subject " + (j + 1) + ": ");
+                marks[j] = safeReadInt(scanner);
+            }
+
+            students.add(new Student(name, id, marks));
         }
 
         System.out.println("\nAll Students:");
-        for (Student s : students) {
-            System.out.println("Name: " + s.getName() + " | ID: " + s.getId() + " | Average: " + s.getAverage());
-        }
+        for (Student s : students) System.out.println(s);
 
         Student topper = service.findTopper(students);
-        System.out.println("\nTopper: " + topper.getName() + " | Average: " + topper.getAverage());
+        if (topper != null)
+            System.out.println("\nTopper: " + topper.getName() + " | Average: " + topper.getAverage());
 
         System.out.print("\nSort by Average? (y/n): ");
         if (scanner.next().equalsIgnoreCase("y")) {
             service.sortByAverage(students);
-            System.out.println("\nSorted List (by Average):");
-            for (Student s : students) {
-                System.out.println(s.getName() + " | Average: " + s.getAverage());
-            }
+            System.out.println("\nSorted Students (by Average):");
+            for (Student s : students) System.out.println(s);
         }
 
-        System.out.print("\nSearch student by ID? (y/n): ");
+        System.out.print("\nSearch by ID? (y/n): ");
         if (scanner.next().equalsIgnoreCase("y")) {
-            System.out.print("Enter ID: ");
-            int searchId = scanner.nextInt();
+            System.out.print("Enter ID to search: ");
+            int searchId = safeReadInt(scanner);
             Student found = service.searchById(students, searchId);
-            if (found != null) {
-                System.out.println("Found: " + found.getName() + " | Average: " + found.getAverage());
-            } else {
-                System.out.println("Student not found!");
-            }
+            if (found != null)
+                System.out.println("Found: " + found);
+            else
+                System.out.println("No student found with ID " + searchId);
         }
 
-        System.out.print("\nCalculate grades? (y/n): ");
+        System.out.print("\nPrint Grades? (y/n): ");
         if (scanner.next().equalsIgnoreCase("y")) {
-            service.calculateGrades(students);
             System.out.println("\nGrades:");
-            for (Student s : students) {
-                System.out.println(s.getName() + " | Grade: " + s.getGrade());
-            }
+            service.printGrades(students);
         }
 
-        System.out.println("\nGoodbye!");
+        System.out.println("\nProgram finished successfully!");
+    }
+
+    /**
+     * Reads an integer safely from the user, handling invalid inputs.
+     *
+     * @param scanner scanner object
+     * @return a valid integer
+     */
+    private static int safeReadInt(Scanner scanner) {
+        while (true) {
+            try {
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.print("Invalid input. Please enter a valid integer: ");
+                scanner.next(); // clear invalid input
+            }
+        }
     }
 }
