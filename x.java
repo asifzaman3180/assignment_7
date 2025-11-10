@@ -6,13 +6,13 @@ public class x{
      Scanner s=new Scanner(System.in);
      System.out.println("Enter no. of students: 50");
 
-     int n=s.nextInt();
-     String nm[]=new String[n];
-     int id[]=new int[n];
-     int m1[]=new int[n];
-     int m2[]=new int[n];
+     int num=s.nextInt();
+     String nm[]=new String[num];
+     int id[]=new int[num];
+     int m1[]=new int[num];
+     int m2[]=new int[num];
      int m3[]=new int[n];
-     double avg[]=new double[n];
+     double avg[]=new double[num];
      double top=0;
      int topIndex=0;
 
@@ -34,15 +34,15 @@ public class x{
          }
      }
         System.out.println("All Students:");
-        for(int i=0;i<n;i++){
+        for(int i=0;i<num;i++){
              System.out.println("Name:"+nm[i]+" Id:"+id[i]+" Avg:"+avg[i]);
         }
        System.out.println("Topper: "+nm[topIndex]+" Avg:"+avg[topIndex]);
        System.out.println("Sort by Average? y/n");
        String c=s.next();
        if(c.equals("y")){
-           for(int i=0;i<n-1;i++){
-               for(int j=i+1;j<n;j++){
+           for(int i=0;i<num-1;i++){
+               for(int j=i+1;j<num;j++){
                       if(avg[i]<avg[j]){
                            String tnm=nm[i];
                            nm[i]=nm[j];
@@ -66,7 +66,7 @@ public class x{
                 }
            }
                  System.out.println("Sorted List:");
-                 for(int i=0;i<n;i++){
+                 for(int i=0;i<num;i++){
                         System.out.println(nm[i]+" "+avg[i]);
                  }
      }
@@ -78,7 +78,7 @@ public class x{
                     System.out.println("Enter id:");
                     int sid=s.nextInt();
                     boolean f=false;
-                    for(int i=0;i<n;i++){
+                    for(int i=0;i<num;i++){
                            if(id[i]==sid){
                                  System.out.println("Found:"+nm[i]+" Avg:"+avg[i]);
                                   f=true;
@@ -90,7 +90,7 @@ public class x{
               System.out.println("Calculate grade?");
               String g=s.next();
               if(g.equals("y")){
-                   for(int i=0;i<n;i++){
+                   for(int i=0;i<num;i++){
                         String grade="";
                         if(avg[i]>=80)
                                grade="A+";
