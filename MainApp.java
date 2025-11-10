@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+<<<<<<< HEAD
 
 // Student class to store student info and calculate average
 class Student {
@@ -82,6 +83,10 @@ public class Assignment7 {
     private StudentService service = new StudentService();
     private Scanner scanner = new Scanner(System.in);
 
+=======
+// Student class to store student info and calculate average 
+public class MainApp {
+>>>>>>> documentation
     public static void main(String[] args) {
         Assignment7 app = new Assignment7();
         app.run();
