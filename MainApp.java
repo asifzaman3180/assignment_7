@@ -1,21 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-<<<<<<< HEAD
 
-
-public class Assignment7 {
-
-=======
-// Student class to store student info and calculate average 
-public class MainApp {
->>>>>>> documentation
-    public static void main(String[] args) {
-        MainApp app = new MainApp();
-        app.run();
-    }
-}
-
-
+// Student class to store student info and calculate average
 class Student {
     private String name;
     private int id;
@@ -35,17 +21,9 @@ class Student {
         this.average = (mark1 + mark2 + mark3) / 3.0;
     }
 
-    public double getAverage() {
-        return average;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
+    public double getAverage() { return average; }
+    public int getId() { return id; }
+    public String getName() { return name; }
 
     public String getGrade() {
         if (average >= 80) return "A+";
@@ -61,13 +39,11 @@ class Student {
     }
 }
 
-
+// Service class for student operations
 class StudentService {
     private ArrayList<Student> students = new ArrayList<>();
 
-    public void addStudent(Student s) {
-        students.add(s);
-    }
+    public void addStudent(Student s) { students.add(s); }
 
     public Student findTopper() {
         Student topper = null;
@@ -93,22 +69,23 @@ class StudentService {
     }
 
     public void printAllStudents() {
-        for (Student s : students) {
-            System.out.println(s);
-        }
+        for (Student s : students) System.out.println(s);
     }
 
     public void printGrades() {
-        for (Student s : students) {
-            System.out.println(s.getName() + " Grade: " + s.getGrade());
-        }
+        for (Student s : students) System.out.println(s.getName() + " Grade: " + s.getGrade());
     }
 }
 
-/** Main application class */
-class MainApp {
+// Main application class
+public class Assignment7 {
     private StudentService service = new StudentService();
     private Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        Assignment7 app = new Assignment7();
+        app.run();
+    }
 
     public void run() {
         System.out.println("Enter number of students: ");
@@ -150,21 +127,15 @@ class MainApp {
         }
 
         System.out.println("\nCalculate grade? y/n");
-        if (scanner.next().equalsIgnoreCase("y")) {
-            service.printGrades();
-        }
+        if (scanner.next().equalsIgnoreCase("y")) service.printGrades();
 
         System.out.println("\nBye!");
     }
 
-    /** Safe integer input with exception handling */
     private int safeNextInt() {
         while (true) {
-            try {
-                return Integer.parseInt(scanner.next());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Enter an integer:");
-            }
+            try { return Integer.parseInt(scanner.next()); }
+            catch (NumberFormatException e) { System.out.println("Invalid input. Enter an integer:"); }
         }
     }
 }
