@@ -1,10 +1,12 @@
-import java.util.*;
+git import java.util.*;
 public class x{
 public static void main(String args[]){
 Scanner s=new Scanner(System.in);
 System.out.println("Enter no. of students: ");
 int n=s.nextInt();
+
 String nm[]=new String[n];
+
 int id[]=new int[n];
 int m1[]=new int[n];
 int m2[]=new int[n];
@@ -23,7 +25,7 @@ m2[i]=s.nextInt();
 m3[i]=s.nextInt();
 avg[i]=(m1[i]+m2[i]+m3[i])/3.0;
 if(avg[i]>top){
-top=avg[i];
+top=avg[i];git 
 topIndex=i;
 }
 }
