@@ -2,8 +2,9 @@ import java.util.*;
 
 public class x{
 
+    // Main method for input-output:
     public static void main(String args[]) {
-        Scanner s=new Scanner(System.in);
+        Scanner s=new Scanner(System.in); // For taking input
         System.out.println("Enter no. of students: ");
         int Total=s.nextInt();
 
@@ -25,7 +26,7 @@ public class x{
         System.out.println("Bye!");
     }
 }
-
+// Calculating Average and grades
 class Student {
     String name;
     int Student_ID;
@@ -33,7 +34,7 @@ class Student {
     int Student_2;
     int Student_3;
     double average;
-
+    // Constractor
     Student(String name,int Student_ID,int Student_1,int Student_2,int Student_3) {
         this.name=name;this.Student_ID=Student_ID;this.Student_1=Student_1;this.Student_2=Student_2;this.Student_3=Student_3;
         Calculate_average();
@@ -56,12 +57,12 @@ class Student {
             return "F";
     }
 }
-
+//Finding Topper, Searching Student, taking entry of students information
 class Students {
     Student[] students;
     int total;
     Scanner s;
-
+    // Constructor
     Students(int total,Scanner scanner) {
         this.total=total;
         this.s=scanner;
@@ -95,7 +96,7 @@ class Students {
 
         System.out.println("Topper: "+students[topIndex].name+" Average_marks:"+students[topIndex].average);
     }
-
+    // Sorting Students by marks
     void Sort() {
         for(int i=0;i<total-1;i++) {
             for(int j=i+1;j<total;j++) {
@@ -111,7 +112,7 @@ class Students {
             System.out.println(students[i].name+" "+students[i].average);
         }
     }
-
+    // Searching Students with there Student ID
     void Search() {
         System.out.println("Enter Student_Student_ID:");
         int Temp_Student_ID=s.nextInt();
@@ -123,7 +124,7 @@ class Students {
             }
         }
     }
-
+    // Method for printing grades of Students
     void Print_grades() {
         for(int i=0;i<total;i++) {
             System.out.println(students[i].name+" Grade:"+students[i].grade());
