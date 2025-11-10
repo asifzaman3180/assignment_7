@@ -2,82 +2,82 @@ import java.util.*;
 
 public class x{
     public static void main(String args[]) {
-        Scanner s=new Scanner(System.in);
+        Scanner s = new Scanner(System.in);
         System.out.println("Enter no. of students: ");
-        int n=s.nextInt();
-        String nm[]=new String[n];
-        int id[]=new int[n];
-        int m1[]=new int[n];
-        int m2[]=new int[n];
-        int m3[]=new int[n];
-        double avg[]=new double[n];
+        int Total=s.nextInt();
+        String name[]=new String[Total];
+        int Student_ID[]=new int[Total];
+        int Subject_1_mark[]=new int[Total];
+        int Subject_2_mark[]=new int[Total];
+        int Subject_3_mark[]=new int[Total];
+        double Average_marks[]=new double[Total];
         double top=0;
         int topIndex=0;
-        for(int i=0;i<n;i++) {
+        for(int i=0;i<Total;i++) {
             System.out.println("Enter name:");
-            nm[i]=s.next();
-            System.out.println("Enter id:");
-            id[i]=s.nextInt();
+            name[i]=s.next();
+            System.out.println("Enter Student_ID:");
+            Student_ID[i]=s.nextInt();
             System.out.println("Enter marks of 3 subjects:");
-            m1[i]=s.nextInt();
-            m2[i]=s.nextInt();
-            m3[i]=s.nextInt();
-            avg[i]=(m1[i]+m2[i]+m3[i])/3.0;
-            if(avg[i]>top) {
-                top=avg[i];
+            Subject_1_mark[i]=s.nextInt();
+            Subject_2_mark[i]=s.nextInt();
+            Subject_3_mark[i]=s.nextInt();
+            Average_marks[i]=(Subject_1_mark[i]+Subject_2_mark[i]+Subject_3_mark[i])/3.0;
+            if(Average_marks[i]>top) {
+                top=Average_marks[i];
                 topIndex=i;
             }
         }
 
         System.out.println("All Students:");
 
-        for(int i=0;i<n;i++) {
-            System.out.println("Name:"+nm[i]+" Id:"+id[i]+" Avg:"+avg[i]);
+        for(int i=0;i<Total;i++) {
+            System.out.println("Name:"+name[i]+" Student_ID:"+Student_ID[i]+" Average_marks:"+Average_marks[i]);
         }
 
-        System.out.println("Topper: "+nm[topIndex]+" Avg:"+avg[topIndex]);
+        System.out.println("Topper: "+name[topIndex]+" Average_marks:"+Average_marks[topIndex]);
         System.out.println("Sort by Average? y/n");
         String c=s.next();
 
         if(c.equals("y")) {
-            for(int i=0;i<n-1;i++) {
-                for(int j=i+1;j<n;j++) {
-                    if(avg[i]<avg[j]) {
-                    String tnm=nm[i];
-                    nm[i]=nm[j];
-                    nm[j]=tnm;
-                    int tid=id[i];
-                    id[i]=id[j];
-                    id[j]=tid;
-                    int tm1=m1[i];
-                    m1[i]=m1[j];
-                    m1[j]=tm1;
-                    int tm2=m2[i];
-                    m2[i]=m2[j];
-                    m2[j]=tm2;
-                    int tm3=m3[i];
-                    m3[i]=m3[j];
-                    m3[j]=tm3;
-                    double tav=avg[i];
-                    avg[i]=avg[j];
-                    avg[j]=tav;
+            for(int i=0;i<Total-1;i++) {
+                for(int j=i+1;j<Total;j++) {
+                    if(Average_marks[i]<Average_marks[j]) {
+                    String Temp_Name=name[i];
+                    name[i]=name[j];
+                    name[j]=Temp_Name;
+                    int Temp_ID=Student_ID[i];
+                    Student_ID[i]=Student_ID[j];
+                    Student_ID[j]=Temp_ID;
+                    int Temp1_mark=Subject_1_mark[i];
+                    Subject_1_mark[i]=Subject_1_mark[j];
+                    Subject_1_mark[j]=Temp1_mark;
+                    int Temp2_mark=Subject_2_mark[i];
+                    Subject_2_mark[i]=Subject_2_mark[j];
+                    Subject_2_mark[j]=Temp2_mark;
+                    int Temp3_mark=Subject_3_mark[i];
+                    Subject_3_mark[i]=Subject_3_mark[j];
+                    Subject_3_mark[j]=Temp3_mark;
+                    double tav=Average_marks[i];
+                    Average_marks[i]=Average_marks[j];
+                    Average_marks[j]=tav;
                     }
                 }
             }
             System.out.println("Sorted List:");
-            for(int i=0;i<n;i++) {
-                System.out.println(nm[i]+" "+avg[i]);
+            for(int i=0;i<Total;i++) {
+                System.out.println(name[i]+" "+Average_marks[i]);
             }
         }
-        System.out.println("Search student by id?");
+        System.out.println("Search student by Student_ID?");
         String d=s.next();
         if(d.equals("y")) {
-            System.out.println("Enter id:");
-            int sid=s.nextInt();
+            System.out.println("Enter Student_ID:");
+            int Temp_ID=s.nextInt();
             boolean f=false;
-            for(int i=0;i<n;i++) {
-                if(id[i]==sid) {
-                System.out.println("Found:"+nm[i]+" Avg:"+avg[i]);
+            for(int i=0;i<Total;i++) {
+                if(Student_ID[i]==Temp_ID) {
+                System.out.println("Found:"+name[i]+" Average_marks:"+Average_marks[i]);
                 f=true;
             }
             }
@@ -88,19 +88,19 @@ public class x{
         String g=s.next();
 
         if(g.equals("y")) {
-            for(int i=0;i<n;i++) {
+            for(int i=0;i<Total;i++) {
                 String grade="";
-                if(avg[i]>=80) 
+                if(Average_marks[i]>=80) 
                     grade="A+";
-                else if(avg[i]>=70) 
+                else if(Average_marks[i]>=70) 
                     grade="A";
-                else if(avg[i]>=60) 
+                else if(Average_marks[i]>=60) 
                     grade="B";
-                else if(avg[i]>=50) 
+                else if(Average_marks[i]>=50) 
                     grade="C";
                 else 
                     grade="F";
-                System.out.println(nm[i]+" Grade:"+grade);
+                System.out.println(name[i]+" Grade:"+grade);
             }
         }
         
