@@ -55,6 +55,8 @@ m3[i]=m3[j];
 m3[j]=tm3;
 double tav=avg[i];
 avg[i]=avg[j];
+
+
 avg[j]=tav;
 }
 }
