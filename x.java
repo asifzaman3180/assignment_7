@@ -1,77 +1,188 @@
 import java.util.*;
 
-public class StudentApp {
+class Student {
+    private String name;
+    private int id;
+    private int mark1, mark2, mark3;
+    private double average;
+    private String grade;
 
+    public Student(String name, int id, int mark1, int mark2, int mark3) {
+        this.name = name;
+        this.id = id;
+        this.mark1 = mark1;
+        this.mark2 = mark2;
+        this.mark3 = mark3;
+        calculateAverage();
+        this.grade = "";
+    }
+
+    public void calculateAverage() {
+        this.average = (mark1 + mark2 + mark3) / 3.0;
+    }
+
+    public void calculateGrade() {
+        if (average >= 80) grade = "A+";
+        else if (average >= 70) grade = "A";
+        else if (average >= 60) grade = "B";
+        else if (average >= 50) grade = "C";
+        else grade = "F";
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + " ID: " + id + " Avg: " + average;
+    }
+}
+
+class StudentService {
+    private ArrayList<Student> students;
+
+    public StudentService() {
+        students = new ArrayList<>();
+    }
+
+    public void addStudent(Student s) {
+        students.add(s);
+    }
+
+    public void printAllStudents() {
+        if (students.isEmpty()) {
+            System.out.println("No students available.");
+            return;
+        }
+        for (Student s : students) {
+            System.out.println(s);
+        }
+    }
+
+    public Student findTopper() {
+        if (students.isEmpty()) return null;
+        Student topper = students.get(0);
+        for (Student s : students) {
+            if (s.getAverage() > topper.getAverage()) {
+                topper = s;
+            }
+        }
+        return topper;
+    }
+
+    public void sortByAverage() {
+        students.sort((a, b) -> Double.compare(b.getAverage(), a.getAverage()));
+    }
+
+    public Student searchById(int id) {
+        for (Student s : students) {
+            if (s.getId() == id) return s;
+        }
+        return null;
+    }
+
+    public void printGrades() {
+        for (Student s : students) {
+            s.calculateGrade();
+            System.out.println(s.getName() + " Grade: " + s.getGrade());
+        }
+    }
+
+    public boolean hasStudents() {
+        return !students.isEmpty();
+    }
+}
+
+public class MainApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        StudentService service = new StudentService();
 
-        System.out.println("Enter number of students: ");
-        int numStudents = scanner.nextInt();
-
-        String[] studentNames = new String[numStudents];
-        int[] studentIds = new int[numStudents];
-        int[] marksSubject1 = new int[numStudents];
-        int[] marksSubject2 = new int[numStudents];
-        int[] marksSubject3 = new int[numStudents];
-        double[] averages = new double[numStudents];
-
-        calculateAverage(scanner, studentNames, studentIds, marksSubject1, marksSubject2, marksSubject3, averages);
-
-        System.out.println("\nAll Students:");
-        for (int i = 0; i < numStudents; i++) {
-            System.out.println("Name: " + studentNames[i] + " ID: " + studentIds[i] + " Avg: " + averages[i]);
+        System.out.println("Enter number of students:");
+        int numStudents = 0;
+        try {
+            numStudents = scanner.nextInt();
+            if (numStudents <= 0) {
+                System.out.println("Number of students must be greater than 0.");
+                return;
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Exiting.");
+            return;
         }
 
-        int topperIndex = findTopper(averages);
-        System.out.println("\nTopper: " + studentNames[topperIndex] + " Avg: " + averages[topperIndex]);
+        for (int i = 0; i < numStudents; i++) {
+            System.out.println("Enter name:");
+            String name = scanner.next();
+            System.out.println("Enter ID:");
+            int id = 0;
+            try {
+                id = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid ID. Skipping this student.");
+                scanner.nextLine();
+                continue;
+            }
+            System.out.println("Enter marks of 3 subjects:");
+            int m1 = safeNextInt(scanner);
+            int m2 = safeNextInt(scanner);
+            int m3 = safeNextInt(scanner);
+            service.addStudent(new Student(name, id, m1, m2, m3));
+        }
+
+        System.out.println("\nAll Students:");
+        service.printAllStudents();
+
+        Student topper = service.findTopper();
+        if (topper != null) {
+            System.out.println("\nTopper: " + topper.getName() + " Avg: " + topper.getAverage());
+        }
 
         System.out.println("\nSort by Average? y/n");
         if (scanner.next().equalsIgnoreCase("y")) {
-            sortByAverage(studentNames, studentIds, marksSubject1, marksSubject2, marksSubject3, averages);
+            service.sortByAverage();
             System.out.println("\nSorted List:");
-            for (int i = 0; i < numStudents; i++) {
-                System.out.println(studentNames[i] + " Avg: " + averages[i]);
-            }
+            service.printAllStudents();
         }
 
         System.out.println("\nSearch student by ID? y/n");
         if (scanner.next().equalsIgnoreCase("y")) {
-            searchById(scanner, studentNames, studentIds, averages);
+            System.out.println("Enter ID:");
+            int searchId = safeNextInt(scanner);
+            Student s = service.searchById(searchId);
+            if (s != null) System.out.println("Found: " + s);
+            else System.out.println("Not found");
         }
 
         System.out.println("\nCalculate grade? y/n");
         if (scanner.next().equalsIgnoreCase("y")) {
-            printGrades(studentNames, averages);
+            service.printGrades();
         }
 
         System.out.println("\nBye!");
     }
 
-    static void calculateAverage(Scanner scanner, String[] names, int[] ids, int[] m1, int[] m2, int[] m3, double[] avg) {
-        for (int i = 0; i < names.length; i++) {
-            System.out.println("Enter name:");
-            names[i] = scanner.next();
-            System.out.println("Enter ID:");
-            ids[i] = scanner.nextInt();
-            System.out.println("Enter marks of 3 subjects:");
-            m1[i] = scanner.nextInt();
-            m2[i] = scanner.nextInt();
-            m3[i] = scanner.nextInt();
-            avg[i] = (m1[i] + m2[i] + m3[i]) / 3.0;
+    private static int safeNextInt(Scanner scanner) {
+        int val = 0;
+        try {
+            val = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Defaulting to 0.");
+            scanner.nextLine();
         }
+        return val;
     }
-
-    static int findTopper(double[] avg) {
-        double highest = 0;
-        int index = 0;
-        for (int i = 0; i < avg.length; i++) {
-            if (avg[i] > highest) {
-                highest = avg[i];
-                index = i;
-            }
-        }
-        return index;
-    }
-
-    static void sortByAverage(String[] names, int[] ids, int[] m1, int[] m2, int[] m3, double[] avg) {
-        for (int i = 0; i < avg.length - 1;
+}
