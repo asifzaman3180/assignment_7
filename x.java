@@ -1,5 +1,6 @@
 import java.util.*;
 
+//Student class
 class Student {
     String name;
     int id;
@@ -15,6 +16,8 @@ class Student {
         this.avg = (m1 + m2 + m3) / 3.0;
     }
 }
+
+//studentservice class
 
 class StudentService {
 
@@ -68,6 +71,7 @@ class StudentService {
     }
 }
 
+//MainApp class
 public class MainApp{
     public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
