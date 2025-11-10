@@ -1,96 +1,142 @@
+public class Student {
+    private String name;
+    private int id;
+    private int m1, m2, m3;
+    private double average;
+
+    public Student(String name, int id, int m1, int m2, int m3) {
+        this.name = name;
+        this.id = id;
+        this.m1 = m1;
+        this.m2 = m2;
+        this.m3 = m3;
+        calculateAverage();
+    }
+
+    private void calculateAverage() {
+        average = (m1 + m2 + m3) / 3.0;
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getGrade() {
+        if (average >= 80) return "A+";
+        else if (average >= 70) return "A";
+        else if (average >= 60) return "B";
+        else if (average >= 50) return "C";
+        else return "F";
+    }
+
+    public void display() {
+        System.out.println("Name: " + name + " | ID: " + id + " | Avg: " + average);
+    }
+}
 import java.util.*;
-public class x{
-public static void main(String args[]){
-Scanner s=new Scanner(System.in);
-System.out.println("Enter no. of students: ");
-int n=s.nextInt();
-String nm[]=new String[n];
-int id[]=new int[n];
-int m1[]=new int[n];
-int m2[]=new int[n];
-int m3[]=new int[n];
-double avg[]=new double[n];
-double top=0;
-int topIndex=0;
-for(int i=0;i<n;i++){
-System.out.println("Enter name:");
-nm[i]=s.next();
-System.out.println("Enter id:");
-id[i]=s.nextInt();
-System.out.println("Enter marks of 3 subjects:");
-m1[i]=s.nextInt();
-m2[i]=s.nextInt();
-m3[i]=s.nextInt();
-avg[i]=(m1[i]+m2[i]+m3[i])/3.0;
-if(avg[i]>top){
-top=avg[i];
-topIndex=i;
+
+public class StudentManager {
+    private List<Student> students = new ArrayList<>();
+
+    public void addStudent(Student s) {
+        students.add(s);
+    }
+
+    public void displayAll() {
+        System.out.println("\nAll Students:");
+        for (Student s : students) {
+            s.display();
+        }
+    }
+
+    public Student getTopper() {
+        if (students.isEmpty()) return null;
+        Student top = students.get(0);
+        for (Student s : students) {
+            if (s.getAverage() > top.getAverage()) top = s;
+        }
+        return top;
+    }
+
+    public void sortByAverage() {
+        students.sort((a, b) -> Double.compare(b.getAverage(), a.getAverage()));
+        System.out.println("\nSorted List (by Average):");
+        for (Student s : students) {
+            System.out.println(s.getName() + " " + s.getAverage());
+        }
+    }
+
+    public Student searchById(int id) {
+        for (Student s : students) {
+            if (s.getId() == id) return s;
+        }
+        return null;
+    }
+
+    public void displayGrades() {
+        System.out.println("\nGrades:");
+        for (Student s : students) {
+            System.out.println(s.getName() + " Grade: " + s.getGrade());
+        }
+    }
 }
-}
-System.out.println("All Students:");
-for(int i=0;i<n;i++){
-System.out.println("Name:"+nm[i]+" Id:"+id[i]+" Avg:"+avg[i]);
-}
-System.out.println("Topper: "+nm[topIndex]+" Avg:"+avg[topIndex]);
-System.out.println("Sort by Average? y/n");
-String c=s.next();
-if(c.equals("y")){
-for(int i=0;i<n-1;i++){
-for(int j=i+1;j<n;j++){
-if(avg[i]<avg[j]){
-String tnm=nm[i];
-nm[i]=nm[j];
-nm[j]=tnm;
-int tid=id[i];
-id[i]=id[j];
-id[j]=tid;
-int tm1=m1[i];
-m1[i]=m1[j];
-m1[j]=tm1;
-int tm2=m2[i];
-m2[i]=m2[j];
-m2[j]=tm2;
-int tm3=m3[i];
-m3[i]=m3[j];
-m3[j]=tm3;
-double tav=avg[i];
-avg[i]=avg[j];
-avg[j]=tav;
-}
-}
-}
-System.out.println("Sorted List:");
-for(int i=0;i<n;i++){
-System.out.println(nm[i]+" "+avg[i]);
-}
-}
-System.out.println("Search student by id?");
-String d=s.next();
-if(d.equals("y")){
-System.out.println("Enter id:");
-int sid=s.nextInt();
-boolean f=false;
-for(int i=0;i<n;i++){
-if(id[i]==sid){
-System.out.println("Found:"+nm[i]+" Avg:"+avg[i]);
-f=true;
-}
-}
-if(!f) System.out.println("Not found");
-}
-System.out.println("Calculate grade?");
-String g=s.next();
-if(g.equals("y")){
-for(int i=0;i<n;i++){
-String grade="";
-if(avg[i]>=80) grade="A+";
-else if(avg[i]>=70) grade="A";
-else if(avg[i]>=60) grade="B";
-else if(avg[i]>=50) grade="C";
-else grade="F";
-System.out.println(nm[i]+" Grade:"+grade);
-}
-}
-System.out.println("Bye!");
-}
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        StudentManager manager = new StudentManager();
+
+        System.out.print("Enter number of students: ");
+        int n = s.nextInt();
+
+        for (int i = 0; i < n; i++) {
+            System.out.println("\nEnter details for Student " + (i + 1));
+            System.out.print("Name: ");
+            String name = s.next();
+            System.out.print("ID: ");
+            int id = s.nextInt();
+            System.out.print("Enter marks of 3 subjects: ");
+            int m1 = s.nextInt();
+            int m2 = s.nextInt();
+            int m3 = s.nextInt();
+
+            Student st = new Student(name, id, m1, m2, m3);
+            manager.addStudent(st);
+        }
+
+        manager.displayAll();
+
+        Student top = manager.getTopper();
+        if (top != null)
+            System.out.println("\nTopper: " + top.getName() + " | Avg: " + top.getAverage());
+
+        System.out.print("\nSort by Average? (y/n): ");
+        if (s.next().equalsIgnoreCase("y")) manager.sortByAverage();
+
+        System.out.print("\nSearch student by ID? (y/n): ");
+        if (s.next().equalsIgnoreCase("y")) {
+            System.out.print("Enter ID: ");
+            int sid = s.nextInt();
+            Student found = manager.searchById(sid);
+            if (found != null)
+                System.out.println("Found: " + found.getName() + " | Avg: " + found.getAverage());
+            else
+                System.out.println("Not found");
+        }
+
+        System.out.print("\nCalculate grades? (y/n): ");
+        if (s.next().equalsIgnoreCase("y")) manager.displayGrades();
+
+        System.out.println("\nBye!");
+        s.close();
+    }
 }
