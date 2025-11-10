@@ -13,16 +13,28 @@ class Student {
         this.mark2 = mark2;
         this.mark3 = mark3;
     }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + " | ID: " + id + " | Average: " + average;
+    }
 }
 
 class StudentService {
     public void calculateAverage(List<Student> students) {
         for (Student s : students) {
-            s.average = (s.mark1 + s.mark2 + s.mark3) / 3.0;
+            int totalSubjects = 3;
+            double totalMarks = s.mark1 + s.mark2 + s.mark3;
+            if (totalSubjects > 0) {
+                s.average = totalMarks / totalSubjects;
+            } else {
+                s.average = 0;
+            }
         }
     }
 
     public Student findTopper(List<Student> students) {
+        if (students.isEmpty()) return null;
         Student topStudent = students.get(0);
         for (Student s : students) {
             if (s.average > topStudent.average) {
@@ -64,37 +76,72 @@ class StudentService {
     }
 }
 
-public class MainApp {
+class MainApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         StudentService service = new StudentService();
+        List<Student> students = new ArrayList<>();
 
         System.out.print("Enter number of students: ");
-        int numStudents = scanner.nextInt();
-        List<Student> students = new ArrayList<>();
+        int numStudents = 0;
+        try {
+            numStudents = scanner.nextInt();
+            if (numStudents <= 0) {
+                System.out.println("Invalid number of students. Exiting.");
+                return;
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a number. Exiting.");
+            return;
+        }
 
         for (int i = 0; i < numStudents; i++) {
             System.out.println("\nEnter details for student " + (i + 1) + ":");
             System.out.print("Name: ");
             String name = scanner.next();
-            System.out.print("ID: ");
-            int id = scanner.nextInt();
-            System.out.print("Marks of 3 subjects: ");
-            int mark1 = scanner.nextInt();
-            int mark2 = scanner.nextInt();
-            int mark3 = scanner.nextInt();
+
+            int id;
+            try {
+                System.out.print("ID: ");
+                id = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid ID. Skipping this student.");
+                scanner.nextLine();
+                continue;
+            }
+
+            int mark1, mark2, mark3;
+            try {
+                System.out.print("Marks of 3 subjects: ");
+                mark1 = scanner.nextInt();
+                mark2 = scanner.nextInt();
+                mark3 = scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid marks. Skipping this student.");
+                scanner.nextLine();
+                continue;
+            }
+
             students.add(new Student(name, id, mark1, mark2, mark3));
+        }
+
+        if (students.isEmpty()) {
+            System.out.println("No valid student data entered. Exiting.");
+            return;
         }
 
         service.calculateAverage(students);
 
         System.out.println("\nAll Students:");
         for (Student st : students) {
-            System.out.println("Name: " + st.name + " | ID: " + st.id + " | Average: " + st.average);
+            System.out.println(st);
         }
 
         Student topper = service.findTopper(students);
-        System.out.println("\nTopper: " + topper.name + " | Average: " + topper.average);
+        if (topper != null)
+            System.out.println("\nTopper: " + topper.name + " | Average: " + topper.average);
+        else
+            System.out.println("\nNo topper found (empty list).");
 
         System.out.print("\nSort by Average? (y/n): ");
         String sortChoice = scanner.next();
@@ -102,7 +149,7 @@ public class MainApp {
             service.sortByAverage(students);
             System.out.println("\nSorted List (by average):");
             for (Student st : students) {
-                System.out.println(st.name + " | Average: " + st.average);
+                System.out.println(st);
             }
         }
 
@@ -110,12 +157,16 @@ public class MainApp {
         String searchChoice = scanner.next();
         if (searchChoice.equalsIgnoreCase("y")) {
             System.out.print("Enter ID: ");
-            int searchId = scanner.nextInt();
-            Student found = service.searchById(students, searchId);
-            if (found != null)
-                System.out.println("Found: " + found.name + " | Average: " + found.average);
-            else
-                System.out.println("Not found.");
+            try {
+                int searchId = scanner.nextInt();
+                Student found = service.searchById(students, searchId);
+                if (found != null)
+                    System.out.println("Found: " + found);
+                else
+                    System.out.println("Student with ID " + searchId + " not found.");
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid ID input.");
+            }
         }
 
         System.out.print("\nCalculate grades? (y/n): ");
