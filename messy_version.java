@@ -15,18 +15,18 @@ class Student {
     public Student(String name, int id, int m1, int m2, int m3) {
         this.name = name;
         this.id = id;
-        this.marksSubject1 = m1;
-        this.marksSubject2 = m2;
-        this.marksSubject3 = m3;
+        this.marksSubject1 = Math.max(0, m1); // Prevent negative marks
+        this.marksSubject2 = Math.max(0, m2);
+        this.marksSubject3 = Math.max(0, m3);
         this.average = calculateAverage();
     }
 
-    // Independent method to calculate the student's average marks
+    /** Safely calculate average (avoid division by zero). */
     public double calculateAverage() {
         return (marksSubject1 + marksSubject2 + marksSubject3) / 3.0;
     }
 
-    // Determine the grade based on average
+    /** Determine grade based on average. */
     public String getGrade() {
         if (average >= 80) return "A+";
         else if (average >= 70) return "A";
@@ -35,9 +35,13 @@ class Student {
         else return "F";
     }
 
+    /** Provide a clean, readable string representation of a student. */
     @Override
     public String toString() {
-        return "Name: " + name + " | ID: " + id + " | Average: " + String.format("%.2f", average);
+        return String.format(
+            "Name: %-10s | ID: %-5d | Marks: [%3d, %3d, %3d] | Average: %6.2f | Grade: %-2s",
+            name, id, marksSubject1, marksSubject2, marksSubject3, average, getGrade()
+        );
     }
 }
 
@@ -47,65 +51,67 @@ class Student {
 public class StudentApp {
 
     public static void main(String[] args) {
-
         Scanner scanner = new Scanner(System.in);
         ArrayList<Student> studentList = new ArrayList<>();
 
-        // ===== Step 1: Input Students =====
-        System.out.print("Enter number of students: ");
-        int numberOfStudents = scanner.nextInt();
+        int numberOfStudents = getValidInteger(scanner, "Enter number of students: ", 1, 1000);
 
+        // ===== Step 1: Input Students =====
         for (int i = 0; i < numberOfStudents; i++) {
             System.out.println("\nEnter details for Student " + (i + 1));
 
             System.out.print("Enter name: ");
             String name = scanner.next();
 
-            System.out.print("Enter ID: ");
-            int id = scanner.nextInt();
-
-            System.out.print("Enter marks of 3 subjects: ");
-            int marks1 = scanner.nextInt();
-            int marks2 = scanner.nextInt();
-            int marks3 = scanner.nextInt();
+            int id = getValidInteger(scanner, "Enter ID (positive integer): ", 1, Integer.MAX_VALUE);
+            int marks1 = getValidInteger(scanner, "Enter marks for Subject 1 (0–100): ", 0, 100);
+            int marks2 = getValidInteger(scanner, "Enter marks for Subject 2 (0–100): ", 0, 100);
+            int marks3 = getValidInteger(scanner, "Enter marks for Subject 3 (0–100): ", 0, 100);
 
             studentList.add(new Student(name, id, marks1, marks2, marks3));
         }
 
-        // Display all students
+        if (studentList.isEmpty()) {
+            System.out.println("No students to process. Exiting program.");
+            scanner.close();
+            return;
+        }
+
+        // ===== Step 2: Display All Students =====
         System.out.println("\n--- All Students ---");
         for (Student student : studentList) {
             System.out.println(student);
         }
 
-        // ===== Step 2: Find Topper =====
+        // ===== Step 3: Find Topper =====
         Student topper = findTopper(studentList);
-        System.out.println("\nTopper: " + topper.name + " | Average: " + topper.average);
+        if (topper != null) {
+            System.out.println("\nTopper: " + topper.name + " | Average: " + String.format("%.2f", topper.average));
+        }
 
-        // ===== Step 3: Sort by Average =====
+        // ===== Step 4: Sort by Average =====
         System.out.print("\nDo you want to sort students by average? (y/n): ");
         if (scanner.next().equalsIgnoreCase("y")) {
             sortByAverage(studentList);
             System.out.println("\n--- Students Sorted by Average (High to Low) ---");
             for (Student s : studentList) {
-                System.out.println(s.name + " | Average: " + String.format("%.2f", s.average));
+                System.out.println(s);
             }
         }
 
-        // ===== Step 4: Search by ID =====
+        // ===== Step 5: Search by ID =====
         System.out.print("\nDo you want to search a student by ID? (y/n): ");
         if (scanner.next().equalsIgnoreCase("y")) {
-            System.out.print("Enter student ID: ");
-            int searchId = scanner.nextInt();
+            int searchId = getValidInteger(scanner, "Enter student ID: ", 1, Integer.MAX_VALUE);
             Student found = searchById(studentList, searchId);
             if (found != null) {
                 System.out.println("Found: " + found);
             } else {
-                System.out.println("Student not found!");
+                System.out.println("No student found with ID: " + searchId);
             }
         }
 
-        // ===== Step 5: Print Grades =====
+        // ===== Step 6: Print Grades =====
         System.out.print("\nDo you want to print grades? (y/n): ");
         if (scanner.next().equalsIgnoreCase("y")) {
             printGrades(studentList);
@@ -115,11 +121,14 @@ public class StudentApp {
         scanner.close();
     }
 
-    // ===================== Extracted Methods =====================
+    // ===================== Independent Methods =====================
 
     /** Finds and returns the student with the highest average. */
     public static Student findTopper(ArrayList<Student> students) {
-        if (students.isEmpty()) return null;
+        if (students == null || students.isEmpty()) {
+            System.out.println("No students available to find topper.");
+            return null;
+        }
         Student topper = students.get(0);
         for (Student student : students) {
             if (student.average > topper.average) {
@@ -131,11 +140,17 @@ public class StudentApp {
 
     /** Sorts the list of students by their average (descending order). */
     public static void sortByAverage(ArrayList<Student> students) {
-        students.sort((a, b) -> Double.compare(b.average, a.average));
+        if (students != null && !students.isEmpty()) {
+            students.sort((a, b) -> Double.compare(b.average, a.average));
+        } else {
+            System.out.println("No students to sort.");
+        }
     }
 
     /** Searches for a student by ID and returns the object if found. */
     public static Student searchById(ArrayList<Student> students, int id) {
+        if (students == null || students.isEmpty()) return null;
+
         for (Student student : students) {
             if (student.id == id) {
                 return student;
@@ -144,12 +159,39 @@ public class StudentApp {
         return null;
     }
 
-    /** Prints each student's grade. */
+    /** Prints each student's grade safely. */
     public static void printGrades(ArrayList<Student> students) {
+        if (students == null || students.isEmpty()) {
+            System.out.println("No students available to print grades.");
+            return;
+        }
+
         System.out.println("\n--- Student Grades ---");
         for (Student student : students) {
-            System.out.println(student.name + " | Grade: " + student.getGrade());
+            System.out.printf("%-10s | Grade: %s%n", student.name, student.getGrade());
         }
+    }
+
+    /** Safely gets an integer input within a valid range. */
+    public static int getValidInteger(Scanner scanner, String prompt, int min, int max) {
+        int value = -1;
+        boolean valid = false;
+
+        while (!valid) {
+            System.out.print(prompt);
+            try {
+                value = scanner.nextInt();
+                if (value >= min && value <= max) {
+                    valid = true;
+                } else {
+                    System.out.println("  Please enter a value between " + min + " and " + max + ".");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("  Invalid input. Please enter a valid integer.");
+                scanner.nextLine(); // clear invalid input
+            }
+        }
+        return value;
     }
 }
 
