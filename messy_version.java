@@ -1,103 +1,129 @@
 import java.util.*;
 
+// Represents a single student with ID, name, marks, and average.
+ 
 class Student {
     String name;
     int id;
-    int m1, m2, m3;
-    double avg;
+    int marksSubject1;
+    int marksSubject2;
+    int marksSubject3;
+    double average;
 
+    // Constructor to initialize student details
     public Student(String name, int id, int m1, int m2, int m3) {
         this.name = name;
         this.id = id;
-        this.m1 = m1;
-        this.m2 = m2;
-        this.m3 = m3;
-        this.avg = (m1 + m2 + m3) / 3.0;
+        this.marksSubject1 = m1;
+        this.marksSubject2 = m2;
+        this.marksSubject3 = m3;
+        this.average = (m1 + m2 + m3) / 3.0;
     }
 
+    // Method to compute and return grade
     public String getGrade() {
-        if (avg >= 80) return "A+";
-        else if (avg >= 70) return "A";
-        else if (avg >= 60) return "B";
-        else if (avg >= 50) return "C";
+        if (average >= 80) return "A+";
+        else if (average >= 70) return "A";
+        else if (average >= 60) return "B";
+        else if (average >= 50) return "C";
         else return "F";
     }
 
+    // Display-friendly format for student details
     @Override
     public String toString() {
-        return "Name: " + name + " Id: " + id + " Avg: " + String.format("%.2f", avg);
+        return "Name: " + name + " | ID: " + id + " | Average: " + String.format("%.2f", average);
     }
 }
 
-public class X {
+/**
+ * Main class for handling student input, processing, and output.
+ */
+public class StudentApp {
     public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        ArrayList<Student> students = new ArrayList<>();
 
+        Scanner scanner = new Scanner(System.in);
+        ArrayList<Student> studentList = new ArrayList<>();
+
+        // ===== Step 1: Input Student Data =====
         System.out.print("Enter number of students: ");
-        int n = s.nextInt();
+        int numberOfStudents = scanner.nextInt();
 
-        for (int i = 0; i < n; i++) {
+        for (int i = 0; i < numberOfStudents; i++) {
             System.out.println("\nEnter details for Student " + (i + 1));
+
             System.out.print("Enter name: ");
-            String name = s.next();
-            System.out.print("Enter id: ");
-            int id = s.nextInt();
+            String name = scanner.next();
+
+            System.out.print("Enter ID: ");
+            int id = scanner.nextInt();
+
             System.out.print("Enter marks of 3 subjects: ");
-            int m1 = s.nextInt();
-            int m2 = s.nextInt();
-            int m3 = s.nextInt();
-            students.add(new Student(name, id, m1, m2, m3));
+            int marks1 = scanner.nextInt();
+            int marks2 = scanner.nextInt();
+            int marks3 = scanner.nextInt();
+
+            // Create Student object and add to list
+            studentList.add(new Student(name, id, marks1, marks2, marks3));
         }
 
-        // Display all students
-        System.out.println("\nAll Students:");
-        for (Student st : students) {
-            System.out.println(st);
+        // ===== Step 2: Display All Students =====
+        System.out.println("\n--- All Students ---");
+        for (Student student : studentList) {
+            System.out.println(student);
         }
 
-        // Find topper
-        Student topper = students.get(0);
-        for (Student st : students) {
-            if (st.avg > topper.avg) topper = st;
+        // ===== Step 3: Find Topper =====
+        Student topper = studentList.get(0);
+        for (Student student : studentList) {
+            if (student.average > topper.average) {
+                topper = student;
+            }
         }
-        System.out.println("\nTopper: " + topper.name + " Avg: " + topper.avg);
+        System.out.println("\nTopper: " + topper.name + " | Average: " + topper.average);
 
-        // Sort by average
-        System.out.print("\nSort by Average? (y/n): ");
-        if (s.next().equalsIgnoreCase("y")) {
-            students.sort((a, b) -> Double.compare(b.avg, a.avg));
-            System.out.println("Sorted List:");
-            for (Student st : students) {
-                System.out.println(st.name + " " + st.avg);
+        // ===== Step 4: Sort by Average =====
+        System.out.print("\nDo you want to sort students by average? (y/n): ");
+        if (scanner.next().equalsIgnoreCase("y")) {
+            studentList.sort((a, b) -> Double.compare(b.average, a.average));
+            System.out.println("\n--- Students Sorted by Average (High to Low) ---");
+            for (Student student : studentList) {
+                System.out.println(student.name + " | Average: " + String.format("%.2f", student.average));
             }
         }
 
-        // Search by ID
-        System.out.print("\nSearch student by id? (y/n): ");
-        if (s.next().equalsIgnoreCase("y")) {
-            System.out.print("Enter id: ");
-            int sid = s.nextInt();
+        // ===== Step 5: Search Student by ID =====
+        System.out.print("\nDo you want to search a student by ID? (y/n): ");
+        if (scanner.next().equalsIgnoreCase("y")) {
+            System.out.print("Enter student ID: ");
+            int searchId = scanner.nextInt();
             boolean found = false;
-            for (Student st : students) {
-                if (st.id == sid) {
-                    System.out.println("Found: " + st.name + " Avg: " + st.avg);
+
+            for (Student student : studentList) {
+                if (student.id == searchId) {
+                    System.out.println("Found: " + student);
                     found = true;
+                    break;
                 }
             }
-            if (!found) System.out.println("Not found.");
-        }
 
-        // Calculate grade
-        System.out.print("\nCalculate grade? (y/n): ");
-        if (s.next().equalsIgnoreCase("y")) {
-            for (Student st : students) {
-                System.out.println(st.name + " Grade: " + st.getGrade());
+            if (!found) {
+                System.out.println("Student not found!");
             }
         }
 
-        System.out.println("\nBye!");
-        s.close();
+        // ===== Step 6: Display Grades =====
+        System.out.print("\nDo you want to calculate and display grades? (y/n): ");
+        if (scanner.next().equalsIgnoreCase("y")) {
+            System.out.println("\n--- Grades ---");
+            for (Student student : studentList) {
+                System.out.println(student.name + " | Grade: " + student.getGrade());
+            }
+        }
+
+        // ===== Step 7: Exit =====
+        System.out.println("\nProgram finished. Goodbye!");
+        scanner.close();
     }
 }
 
